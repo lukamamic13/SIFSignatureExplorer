@@ -1,0 +1,430 @@
+library(htmltools)
+
+dir.create("docs", showWarnings = FALSE, recursive = TRUE)
+
+about_css <- "
+:root{
+  --bg:#000000;
+  --bg-soft:#06100b;
+  --panel:rgba(255,255,255,0.05);
+  --panel-soft:rgba(255,255,255,0.03);
+  --border:rgba(157,255,179,0.12);
+  --border-soft:rgba(255,255,255,0.08);
+  --text:#f6f7f7;
+  --muted:#b8c7be;
+  --accent:#9dffb3;
+  --accent-strong:#72f59a;
+  --shadow:0 20px 60px rgba(0,0,0,0.42);
+  --radius:24px;
+  --max-width:1180px;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:
+    radial-gradient(circle at top right, rgba(90,255,160,0.05), transparent 24%),
+    linear-gradient(to bottom, #000000, #04110a 30%, #000000 100%);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  min-height:100%;
+}
+
+body{
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .55s ease, transform .55s ease;
+}
+
+body.page-loaded{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.site-nav a,
+.btn,
+.multi-select-trigger{
+  transition: opacity .2s ease, transform .2s ease, color .2s ease, background .2s ease, border-color .2s ease;
+}
+
+.site-nav a:hover,
+.btn:hover{
+  transform: translateY(-1px);
+}
+
+a{
+  color:var(--accent);
+  text-decoration:none;
+}
+a:hover{
+  text-decoration:underline;
+}
+
+.site-header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  backdrop-filter:blur(14px);
+  background:rgba(0,0,0,0.58);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+
+.site-header-inner{
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:16px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+
+.site-brand{
+  color:var(--accent);
+  font-weight:700;
+  letter-spacing:.03em;
+}
+
+.site-nav{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+}
+
+.site-nav a{
+  color:var(--muted);
+  font-size:.95rem;
+}
+
+.site-nav a.active,
+.site-nav a:hover{
+  color:var(--text);
+}
+
+.page-shell{
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:38px 24px 60px;
+}
+
+.hero{
+  padding:10px 0 20px;
+}
+
+.eyebrow{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:.78rem;
+  font-weight:600;
+  margin-bottom:18px;
+}
+
+.hero-title{
+  margin:0;
+  font-size:clamp(2.1rem, 4.8vw, 4.2rem);
+  line-height:.98;
+  letter-spacing:-.04em;
+  max-width:950px;
+}
+
+.hero-lead{
+  margin:18px 0 0;
+  color:var(--muted);
+  line-height:1.8;
+  max-width:900px;
+  font-size:1.03rem;
+}
+
+.section{
+  margin-top:28px;
+  padding:26px;
+  border-radius:26px;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+  border:1px solid rgba(157,255,179,.10);
+  box-shadow:var(--shadow);
+}
+
+.section h2{
+  margin:0 0 14px;
+  font-size:1.18rem;
+  color:var(--text);
+}
+
+.section h3{
+  margin:22px 0 10px;
+  font-size:1.02rem;
+  color:var(--accent);
+}
+
+.section p{
+  margin:0 0 12px;
+  color:var(--muted);
+  line-height:1.85;
+}
+
+.section ul{
+  margin:0;
+  padding-left:22px;
+  color:var(--muted);
+}
+
+.section li{
+  margin:0 0 10px;
+  line-height:1.8;
+}
+
+.paper-card{
+  display:grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap:18px;
+}
+
+.paper-box,
+.meta-box{
+  padding:22px;
+  border-radius:22px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+}
+
+.meta-label{
+  color:var(--accent);
+  font-size:.82rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+.meta-box p:last-child,
+.paper-box p:last-child{
+  margin-bottom:0;
+}
+
+.quote{
+  margin-top:14px;
+  padding:16px 18px;
+  border-left:3px solid rgba(157,255,179,.35);
+  background:rgba(157,255,179,.04);
+  border-radius:12px;
+  color:var(--text);
+}
+
+@media (max-width:900px){
+  .paper-card{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width:640px){
+  .site-header-inner{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .page-shell{
+    padding:24px 18px 46px;
+  }
+
+  .section{
+    padding:20px;
+  }
+}
+"
+
+page <- tags$html(
+  lang = "en",
+  tags$head(
+    tags$meta(charset = "UTF-8"),
+    tags$meta(name = "viewport", content = "width=device-width, initial-scale=1.0"),
+    tags$title("About | SIF Signature Explorer"),
+    tags$link(rel = "preconnect", href = "https://fonts.googleapis.com"),
+    tags$link(rel = "preconnect", href = "https://fonts.gstatic.com", crossorigin = "anonymous"),
+    tags$link(
+      href = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap",
+      rel = "stylesheet"
+    ),
+    tags$style(HTML(about_css))
+  ),
+  
+  tags$body(
+    tags$header(
+      class = "site-header",
+      tags$div(
+        class = "site-header-inner",
+        tags$div(class = "site-brand", "SIF Signature Explorer"),
+        tags$nav(
+          class = "site-nav",
+          tags$a(href = "index.html", "Home"),
+          tags$a(href = "learn.html", "Learn"),
+          tags$a(href = "explorer.html", "Explorer"),
+          tags$a(href = "relationships.html", "Relationships"),
+          tags$a(href = "about.html", class = "active", "About")
+        )
+      )
+    ),
+    
+    tags$main(
+      class = "page-shell",
+      
+      tags$section(
+        class = "hero",
+        tags$div(class = "eyebrow", "About the project"),
+        tags$h1(
+          class = "hero-title",
+          "Context, data sources, methods, and publication background for the SIF Signature Explorer"
+        ),
+        tags$p(
+          class = "hero-lead",
+          "This page documents the data, processing choices, publication context, and reuse information behind the SIF Signature Explorer."
+        )
+      ),
+      
+      tags$section(
+        class = "section",
+        tags$h2("Paper"),
+        tags$div(
+          class = "paper-card",
+          
+          tags$div(
+            class = "paper-box",
+            tags$div(class = "meta-label", "Publication"),
+            tags$p(
+              tags$strong("Mamić, L., Riches, M., Farmer, D. K., & Pirotti, F. (2025).")
+            ),
+            tags$p(
+              tags$em("Solar-induced fluorescence as a robust proxy for vegetation productivity across climate zones and vegetation types in the United States.")
+            ),
+            tags$p(
+              tags$em("Remote Sensing Applications: Society and Environment, 40"),
+              ", 101760."
+            ),
+            tags$p(
+              "DOI: ",
+              tags$a(
+                href = "https://doi.org/10.1016/j.rsase.2025.101760",
+                target = "_blank",
+                "10.1016/j.rsase.2025.101760"
+              )
+            ),
+            tags$div(
+              class = "quote",
+              "This explorer accompanies the publication and helps users interactively examine seasonal SIF signatures across vegetation types and climate zones."
+            )
+          ),
+          
+          tags$div(
+            class = "meta-box",
+            tags$div(class = "meta-label", "What this adds"),
+            tags$p(
+              "The paper presents a continental-scale assessment of seasonal SIF signatures across 33 vegetation types and 24 climate zones in the contiguous United States."
+            ),
+            tags$p(
+              "The web explorer turns this analysis into an interactive resource for comparing seasonal vegetation activity, climate-specific signatures, and SIF–GPP–NDVI relationships."
+              
+            )
+          )
+        )
+      ),
+      
+      tags$section(
+        class = "section",
+        tags$h2("Overview"),
+        tags$p(
+          "The SIF Signature Explorer visualizes seasonal solar-induced fluorescence signatures across vegetation types and climate zones in the contiguous United States. ",
+          "It accompanies the study by Mamić et al. (2025), which evaluates SIF as a proxy for vegetation productivity and compares its behaviour with GPP and NDVI."
+        ),
+        
+        tags$h3("Data sources"),
+        tags$ul(
+          tags$li(
+            "TROPOSIF/TROPOMI solar-induced fluorescence (SIF) retrievals at ~743 nm for 2019–2021 (",
+            tags$a(
+              href = "https://s5p-troposif.noveltis.fr/",
+              target = "_blank",
+              "TROPOSIF project"
+            ),
+            ")."
+          ),
+          tags$li("USDA Cropland Data Layer land-cover classes, filtered for stable vegetation types and high classification confidence."),
+          tags$li("Köppen–Geiger climate classification used to assign each selected point to a climate category."),
+          tags$li("MODIS-derived normalized difference vegetation index (NDVI), leaf area index (LAI), fraction of absorbed photosynthetically active radiation (fPAR) and gross primary productivity (GPP) used as comparison variables."),
+          tags$li(
+            HTML("Estimated stomatal conductance (Gs) derived as Gs ≈ GPP / &radic;VPD, using GRIDMET vapor pressure deficit (VPD).")
+          )
+        ),
+        
+        tags$h3("Computation of SIF signatures"),
+        tags$ul(
+          tags$li("Representative points were selected for each vegetation type–climate combination, prioritizing homogeneous pixels and limiting the number of points per combination."),
+          tags$li("Daily SIF and comparison variables were aggregated to weekly means for each selected point."),
+          tags$li("Weekly values were averaged across the 2019–2021 period to reduce the influence of anomalous years."),
+          tags$li("Locally Estimated Scatterplot Smoothing (LOESS) was applied separately to each vegetation type–climate combination to highlight the typical seasonal trajectory."),
+          tags$li("Mean values, standard deviation, and standard error are provided to describe seasonal variability.")
+        ),
+        
+        tags$h3("Relationships between SIF, GPP and NDVI"),
+        tags$p(
+          "The relationships page summarizes linear relationships between GPP–SIF, SIF–NDVI, and GPP–NDVI. ",
+          "These comparisons help show where SIF remains closely linked to productivity and where greenness-based indicators such as NDVI become less responsive to functional changes."
+        ),
+        
+        tags$h3("Code and data availability"),
+        tags$p(
+          "The code and data used to generate this application, as well as materials illustrating the relationships between SIF, GPP and NDVI across vegetation types and climates, are available on GitHub: ",
+          tags$a(
+            href = "https://github.com/lukamamic13/SIF_Signature_Explorer/",
+            target = "_blank",
+            "GitHub repository"
+          ),
+          "."
+        ),
+        
+        tags$h3("Usage notes"),
+        tags$ul(
+          tags$li("Results are intended for research, teaching, and exploratory interpretation."),
+          tags$li("Patterns should be interpreted with awareness of the spatial resolution of TROPOMI and the aggregation used to construct representative signatures."),
+          tags$li("Regression results are best interpreted as relative comparisons across vegetation and climate groups, not as absolute productivity estimates."),
+          tags$li("For full methodological details, please refer to the published article and repository.")
+        ),
+        
+        tags$h3("Contact"),
+        tags$p(
+          "If you use these data, figures, or outputs, please cite the article above. ",
+          "For questions, reuse, or collaboration, contact ",
+          tags$a(href = "mailto:luka.mamic@unipd.it", "luka.mamic@unipd.it"),
+          "."
+        )
+      )
+    ),
+    
+    tags$script(HTML("
+document.addEventListener('DOMContentLoaded', function() {
+  requestAnimationFrame(() => {
+    document.body.classList.add('page-loaded');
+  });
+
+  const internalLinks = document.querySelectorAll('a[href$=\".html\"]');
+  internalLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      const href = link.getAttribute('href');
+      if (!href) return;
+
+      e.preventDefault();
+      document.body.classList.remove('page-loaded');
+
+      setTimeout(() => {
+        window.location.href = href;
+      }, 220);
+    });
+  });
+});
+"))
+  )
+)
+
+save_html(page, file = "docs/about.html", background = "black")
+message("About page written to docs/about.html")
+

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>body{background-color:black;}</style>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learn SIF | SIF Signature Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<html lang="en">
+  <body class="learn-page">
+    <header class="site-header">
+      <div class="site-header-inner">
+        <div class="site-brand">SIF Signature Explorer</div>
+        <nav class="site-nav">
+          <a href="index.html">Home</a>
+          <a href="learn.html" class="active">Learn</a>
+          <a href="explorer.html">Explorer</a>
+          <a href="relationships.html">Relationships</a>
+          <a href="about.html">About</a>
+        </nav>
+      </div>
+    </header>
+    <main class="page-shell">
+      <section class="learn-hero">
+        <div class="section-eyebrow">Discover Solar-Induced Fluorescence</div>
+        <h1 class="learn-title">A more direct view into the living rhythm of vegetation</h1>
+        <p class="learn-lead">
+          Solar-induced fluorescence, or SIF, is a faint glow emitted by plants during photosynthesis. 
+          Because it is linked to plant function rather than structure, it offers a way to better 
+          understand vegetation productivity, stress, and seasonal dynamics across ecosystems from space.
+        </p>
+      </section>
+      <section class="section-block">
+        <h2 class="section-title">What is SIF?</h2>
+        <p class="section-text">
+          When chlorophyll absorbs sunlight, the absorbed energy is partitioned among photochemistry, heat dissipation, 
+          and fluorescence. A very small fraction is re-emitted as solar-induced fluorescence. 
+          That weak signal can be observed remotely and used as an indicator of photosynthetic activity. 
+        </p>
+        <div class="figure-block">
+          <img src="assets/SIF.gif" class="learn-gif" alt="Illustration of solar-induced fluorescence process"/>
+        </div>
+        <div class="card-grid">
+          <article class="info-card">
+            <div class="info-card-number">01</div>
+            <h3>Plants absorb light</h3>
+            <p>
+              Leaves absorb incoming solar radiation, especially in wavelengths linked to chlorophyll activity. 
+              This captured energy powers the photosynthetic machinery.
+            </p>
+          </article>
+          <article class="info-card">
+            <div class="info-card-number">02</div>
+            <h3>A tiny fraction is re-emitted</h3>
+            <p>
+              Not all absorbed energy becomes carbon uptake. A small part is re-emitted as solar-induced fluorescence, 
+              creating a measurable optical signal.
+            </p>
+          </article>
+          <article class="info-card">
+            <div class="info-card-number">03</div>
+            <h3>That signal reveals function</h3>
+            <p>
+              Because SIF is closely linked to photosynthetic processes, it can often reflect productivity and stress 
+              more directly than greenness alone.
+            </p>
+          </article>
+        </div>
+      </section>
+      <section class="section-block">
+        <h2 class="section-title">The physics behind the SIF signal.</h2>
+        <p class="section-text">
+          SIF emerges from chlorophyll excitation. After light is absorbed, some energy is used in photochemistry, 
+          some is dissipated as heat, and some is re-emitted as fluorescence. 
+          This fluorescence typically appears as a red and far-red glow, with characteristic peaks near 685 nm and 740 nm. 
+          Because these emissions are tied to the functioning of the photosynthetic apparatus, SIF provides a physiological signal, 
+          not just a structural one.
+        </p>
+        <figure class="figure-block">
+          <img src="assets/sifsign.png" class="learn-figure" alt="Characteristic chlorophyll fluorescence signal with peaks near 685 and 740 nanometers"/>
+          <figcaption class="figure-caption">Characteristic chlorophyll fluorescence emission peaks in the red and far-red spectral regions.</figcaption>
+        </figure>
+      </section>
+      <section class="section-block">
+        <h2 class="section-title">How can we observe SIF from space?</h2>
+        <p class="section-text">
+          Although SIF is a faint signal, it can be retrieved passively from space using high-resolution spectrometers. 
+          In this project, we use satellite-based observations from the TROPOMI instrument, which provides global measurements of solar-induced fluorescence at 743 nm with daily coverage. 
+          These observations are aggregated into weekly time series and grouped by vegetation type and climate zone to derive representative seasonal signatures. 
+          This ensures a transparent and reproducible framework for comparing vegetation functioning across ecosystems while preserving their temporal dynamics. 
+          Further details on the data sources, processing steps, and methodology are available on the 
+          <a href="about.html" style="color: var(--accent);">About page</a>
+          .
+        </p>
+        <div class="highlight-panel">
+          <p class="highlight-quote">SIF lets us observe not only how green vegetation is, but how actively it is functioning.</p>
+          <p class="highlight-note">This is what makes SIF particularly valuable for remote sensing of crop productivity, ecosystem activity, seasonal change, and stress response.</p>
+        </div>
+      </section>
+      <section class="section-block">
+        <h2 class="section-title">What does SIF bring compared to common vegetation indices?</h2>
+        <p class="section-text">
+          Traditional vegetation indices such as normalized difference vegetation index (NDVI) are extremely useful, but they capture canopy structure and greenness. 
+          SIF adds something different: a window into vegetation function. 
+          This makes it especially valuable when vegetation remains green but photosynthesis is changing because of drought, heat, air pollution, phenology, or atmospheric demand.
+        </p>
+        <div class="comparison-grid">
+          <article class="comparison-card">
+            <h3>NDVI and similar indices</h3>
+            <ul>
+              <li>Excellent for canopy greenness and structure</li>
+              <li>Useful, robust, and widely adopted</li>
+              <li>Can decouple from productivity under stress</li>
+              <li>May stay high even when physiology is changing</li>
+            </ul>
+          </article>
+          <article class="comparison-card comparison-card-accent">
+            <h3>SIF</h3>
+            <ul>
+              <li>More directly linked to photosynthetic function</li>
+              <li>Sensitive to productivity and stress dynamics</li>
+              <li>Can better track changes when canopies remain green</li>
+              <li>Supports climate- and vegetation-specific interpretation</li>
+            </ul>
+          </article>
+        </div>
+        <div class="center-callout">
+          <p class="center-callout-title">See this comparison in action</p>
+          <p class="center-callout-text">
+            You can compare how SIF, gross primary productivity (GPP), and NDVI relationships change across vegetation types and climate zones 
+            - observe how SIF remains closely linked to productivity where greenness diverge.
+          </p>
+          <a href="relationships.html" class="btn btn-primary">Go to Relationships</a>
+        </div>
+      </section>
+      <section class="footer-cta">
+        <h2 class="section-title">Ready to explore the signatures?</h2>
+        <p>
+          This platform brings together scientific context, comparative analysis, and interactive exploration in one place. 
+          We designed it to make SIF easier to understand, easier to compare with commonly used vegetation indices, 
+          and easier to apply across crops and climate zones through a clear and portable web interface.
+        </p>
+        <div class="learn-actions">
+          <a href="explorer.html" class="btn btn-primary">Go to Explorer</a>
+          <a href="about.html" class="btn btn-secondary">Go to About</a>
+        </div>
+      </section>
+      <section class="section-block references-block">
+        <h2 class="section-title">Selected references</h2>
+        <ul class="reference-list">
+          <li>
+            Guanter, L., et al. (2015). 
+            <em>Potential of the TROPOspheric Monitoring Instrument (TROPOMI) onboard the Sentinel-5 Precursor for the monitoring of terrestrial chlorophyll fluorescence</em>
+             
+            <a href="https://amt.copernicus.org/articles/8/1337/2015/" target="_blank" style="color: var(--accent);">(read)</a>
+          </li>
+          <li>
+            Mohammed, G. H., et al. (2019). 
+            <em>Remote sensing of solar-induced chlorophyll fluorescence (SIF) in vegetation: 50 years of progress</em>
+             
+            <a href="https://www.sciencedirect.com/science/article/abs/pii/S0034425719301816" target="_blank" style="color: var(--accent);">(read)</a>
+          </li>
+          <li>
+            Köhler, P., et al. (2018). 
+            <em>Global Retrievals of Solar-Induced Chlorophyll Fluorescence With TROPOMI: First Results and Intersensor Comparison to OCO-2</em>
+             
+            <a href="https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2018GL079031" target="_blank" style="color: var(--accent);">(read)</a>
+          </li>
+          <li>
+            Mamić, L., et al. (2025). 
+            <em>Solar-induced fluorescence as a robust proxy for vegetation productivity across climate zones and vegetation types in the United States.</em>
+             
+            <a href="https://www.sciencedirect.com/science/article/pii/S2352938525003131" target="_blank" style="color: var(--accent);">(read)</a>
+          </li>
+        </ul>
+      </section>
+    </main>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  requestAnimationFrame(() => {
+    document.body.classList.add('page-loaded');
+  });
+
+  const internalLinks = document.querySelectorAll('a[href$=".html"]');
+  internalLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      const href = link.getAttribute('href');
+      if (!href) return;
+
+      e.preventDefault();
+      document.body.classList.remove('page-loaded');
+
+      setTimeout(() => {
+        window.location.href = href;
+      }, 220);
+    });
+  });
+});
+</script>
+  </body>
+</html>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>body{background-color:black;}</style>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SIF Signature Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<html lang="en">
+  <body class="landing-page">
+    <main class="hero">
+      <div class="hero-media">
+        <img src="assets/hero.gif" alt="Global SIF animation" class="hero-gif"/>
+        <div class="hero-overlay"></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-badge">SIF Signature Explorer</div>
+        <h1 class="hero-title">The Pulse of Photosynthesis</h1>
+        <p class="hero-subtitle">How does vegetation shape our planet with solar-induced fluorescence?</p>
+        <div class="hero-actions">
+          <a href="learn.html" class="btn btn-primary">Discover More</a>
+        </div>
+      </div>
+    </main>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  requestAnimationFrame(() => {
+    document.body.classList.add('page-loaded');
+  });
+
+  const internalLinks = document.querySelectorAll('a[href$=".html"]');
+  internalLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      const href = link.getAttribute('href');
+      if (!href) return;
+
+      e.preventDefault();
+      document.body.classList.remove('page-loaded');
+
+      setTimeout(() => {
+        window.location.href = href;
+      }, 220);
+    });
+  });
+});
+</script>
+  </body>
+</html>
+</html>

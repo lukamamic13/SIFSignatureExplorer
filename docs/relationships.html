@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>body{background-color:black;}</style>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SIF–GPP–NDVI Relationships | SIF Signature Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+:root{
+  --bg:#000000;
+  --bg-soft:#06100b;
+  --panel:rgba(255,255,255,0.05);
+  --panel-soft:rgba(255,255,255,0.03);
+  --border:rgba(157,255,179,0.12);
+  --border-soft:rgba(255,255,255,0.08);
+  --text:#f6f7f7;
+  --muted:#b8c7be;
+  --accent:#9dffb3;
+  --accent-strong:#72f59a;
+  --shadow:0 20px 60px rgba(0,0,0,0.42);
+  --radius:24px;
+  --max-width:1400px;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:
+    radial-gradient(circle at top right, rgba(90,255,160,0.05), transparent 24%),
+    linear-gradient(to bottom, #000000, #04110a 30%, #000000 100%);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  min-height:100%;
+}
+
+body{
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .55s ease, transform .55s ease;
+}
+
+body.page-loaded{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.site-nav a,
+.btn,
+.multi-select-trigger{
+  transition: opacity .2s ease, transform .2s ease, color .2s ease, background .2s ease, border-color .2s ease;
+}
+
+.site-nav a:hover,
+.btn:hover{
+  transform: translateY(-1px);
+}
+
+a{color:inherit;text-decoration:none}
+
+.site-header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  backdrop-filter:blur(14px);
+  background:rgba(0,0,0,0.58);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+
+.site-header-inner{
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:16px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+
+.site-brand{
+  color:var(--accent);
+  font-weight:700;
+  letter-spacing:.03em;
+}
+
+.site-nav{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+}
+
+.site-nav a{
+  color:var(--muted);
+  font-size:.95rem;
+}
+
+.site-nav a.active,
+.site-nav a:hover{
+  color:var(--text);
+}
+
+.page-shell{
+  max-width:var(--max-width);
+  margin:0 auto;
+  padding:34px 24px 60px;
+}
+
+.hero{
+  padding:10px 0 22px;
+}
+
+.eyebrow{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:.78rem;
+  font-weight:600;
+  margin-bottom:18px;
+}
+
+.hero-title{
+  margin:0;
+  font-size:clamp(2.1rem, 4.8vw, 4.2rem);
+  line-height:.98;
+  letter-spacing:-.04em;
+  max-width:980px;
+}
+
+.hero-lead{
+  margin:18px 0 0;
+  color:var(--muted);
+  line-height:1.8;
+  max-width:940px;
+  font-size:1.03rem;
+}
+
+.toolbar{
+  margin-top:26px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.status-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 12px;
+  border-radius:999px;
+  background:rgba(157,255,179,.08);
+  border:1px solid rgba(157,255,179,.14);
+  color:var(--accent);
+  font-size:.84rem;
+}
+
+.layout{
+  margin-top:28px;
+  display:grid;
+  grid-template-columns:330px minmax(0,1fr);
+  gap:22px;
+  align-items:start;
+}
+
+.control-panel{
+  position:sticky;
+  top:82px;
+  padding:22px;
+  border-radius:26px;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+}
+
+.control-group + .control-group{margin-top:18px}
+
+.control-label{
+  display:block;
+  margin-bottom:8px;
+  font-size:.92rem;
+  font-weight:600;
+  color:var(--text);
+}
+
+.control-help{
+  margin-top:7px;
+  color:var(--muted);
+  font-size:.83rem;
+  line-height:1.55;
+}
+
+.radio-stack{
+  display:grid;
+  gap:10px;
+}
+
+.option-chip{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+}
+
+.option-chip input{accent-color:#9dffb3}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:170px;
+  padding:14px 20px;
+  border-radius:999px;
+  font-size:.96rem;
+  font-weight:600;
+  cursor:pointer;
+  border:none;
+}
+
+.btn-primary{
+  color:#021108;
+  background:linear-gradient(135deg, var(--accent), var(--accent-strong));
+  box-shadow:0 10px 30px rgba(114,245,154,.22);
+}
+
+.panel-stack{
+  display:grid;
+  gap:20px;
+}
+
+.data-panel{
+  padding:22px;
+  border-radius:26px;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+  border:1px solid rgba(157,255,179,.10);
+  box-shadow:var(--shadow);
+}
+
+.panel-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:12px;
+}
+
+.panel-title{
+  margin:0;
+  font-size:1.08rem;
+}
+
+.panel-note{
+  margin:0 0 16px;
+  color:var(--muted);
+  line-height:1.7;
+  font-size:.95rem;
+}
+
+#r2Plot, #slopePlot{
+  width:100%;
+  min-height:520px;
+}
+
+.empty-state{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:220px;
+  border-radius:20px;
+  border:1px dashed rgba(157,255,179,.18);
+  background:rgba(255,255,255,.02);
+  color:var(--muted);
+  text-align:center;
+  padding:22px;
+  line-height:1.75;
+}
+
+.multi-select {
+  position: relative;
+}
+
+.multi-select-trigger {
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border-soft);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  cursor: pointer;
+}
+
+.multi-select-placeholder {
+  color: var(--muted);
+}
+
+.multi-select-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(157,255,179,.10);
+  border: 1px solid rgba(157,255,179,.18);
+  color: var(--text);
+  font-size: .84rem;
+}
+
+.multi-select-chip button {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: .9rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.multi-select-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 12px;
+  border-radius: 18px;
+  background: #08120c;
+  border: 1px solid rgba(157,255,179,.14);
+  box-shadow: var(--shadow);
+  display: none;
+  max-height: 320px;
+  overflow: hidden;
+}
+
+.multi-select.open .multi-select-dropdown {
+  display: block;
+}
+
+.multi-select-search {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.multi-select-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.multi-select-actions button {
+  border: 1px solid rgba(157,255,179,.14);
+  background: rgba(255,255,255,.03);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: .82rem;
+}
+
+.multi-select-options {
+  max-height: 180px;
+  overflow-y: auto;
+  display: grid;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.multi-select-options::-webkit-scrollbar {
+  width: 6px;
+}
+
+.multi-select-options::-webkit-scrollbar-thumb {
+  background: rgba(157,255,179,0.3);
+  border-radius: 6px;
+}
+
+.multi-select-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.05);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.multi-select-option input {
+  accent-color: #9dffb3;
+}
+
+.multi-select-option.hidden {
+  display: none;
+}
+
+.small-note{
+  color:var(--muted);
+  line-height:1.65;
+  font-size:.9rem;
+}
+
+@media (max-width:1100px){
+  .layout{grid-template-columns:1fr}
+  .control-panel{position:static}
+}
+
+@media (max-width:640px){
+  .site-header-inner{flex-direction:column;align-items:flex-start}
+  .page-shell{padding:24px 18px 48px}
+}
+</style>
+</head>
+<html lang="en">
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <div class="site-brand">SIF Signature Explorer</div>
+        <nav class="site-nav">
+          <a href="index.html">Home</a>
+          <a href="learn.html">Learn</a>
+          <a href="explorer.html">Explorer</a>
+          <a href="relationships.html" class="active">Relationships</a>
+          <a href="about.html">About</a>
+        </nav>
+      </div>
+    </header>
+    <main class="page-shell">
+      <section class="hero">
+        <div class="eyebrow">SIF–GPP–NDVI Relationships</div>
+        <h1 class="hero-title">Compare how SIF, GPP, and NDVI relate across vegetation and climate groups</h1>
+        <p class="hero-lead">
+          This page summarizes relationships between SIF, GPP, and NDVI across vegetation types and climate zones. 
+          Use it to compare how strongly each relationship holds, and whether the direction and strength of these links change between groups. 
+          Start with the grouped view for a broad overview, or switch to individual vegetation types and climates for more specific comparisons.
+        </p>
+        <div class="toolbar">
+          <div class="status-pill">
+            <span id="rowCountText">0 relationship summaries</span>
+          </div>
+          <div class="status-pill">
+            <span id="metricCountText">0 relationship(s) selected</span>
+          </div>
+        </div>
+      </section>
+      <section class="layout">
+        <aside class="control-panel">
+          <div class="control-group">
+            <label class="control-label">Relationship(s)</label>
+            <div id="relationshipSelect" class="multi-select"></div>
+            <div class="control-help">By default, all three relationships are selected so the page opens like a summary figure.</div>
+          </div>
+          <div class="control-group">
+            <div class="control-label">View level</div>
+            <div class="radio-stack">
+              <label class="option-chip">
+                <input type="radio" name="summary_type" value="individual"/>
+                <span>Individual vegetation types / climates</span>
+              </label>
+              <label class="option-chip">
+                <input type="radio" name="summary_type" value="group" checked="checked"/>
+                <span>Vegetation groups / climate groups</span>
+              </label>
+            </div>
+          </div>
+          <div id="individualControls" style="display:none;">
+            <div class="control-group">
+              <label class="control-label">Vegetation type(s)</label>
+              <div id="cropSelect" class="multi-select"></div>
+              <div class="control-help">Filter specific vegetation types. Maximum 5 at a time.</div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">Climate(s)</label>
+              <div id="climateSelect" class="multi-select"></div>
+              <div class="control-help">Filter specific climates.</div>
+            </div>
+          </div>
+          <div id="groupControls">
+            <div class="control-group">
+              <label class="control-label">Vegetation group(s)</label>
+              <div id="cropGroupSelect" class="multi-select"></div>
+              <div class="control-help">By default, all vegetation groups are selected.</div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">Climate group(s)</label>
+              <div id="climateGroupSelect" class="multi-select"></div>
+              <div class="control-help">By default, all climate groups are selected.</div>
+            </div>
+          </div>
+          <div class="control-group">
+            <button id="downloadBtn" class="btn btn-primary" style="width:100%;">Download filtered data</button>
+          </div>
+          <div class="control-group">
+            <p class="small-note">
+              If using these data or outputs, please cite Mamić et al. (2025), 
+              <em>Remote Sensing Applications: Society and Environment</em>
+              , 40, 101760. 
+              <a href="https://doi.org/10.1016/j.rsase.2025.101760" target="_blank" style="color: var(--accent);">DOI</a>
+              . For questions or reuse, contact 
+              <a href="mailto:luka.mamic@unipd.it" style="color: var(--accent);">luka.mamic@unipd.it</a>
+              .
+            </p>
+          </div>
+        </aside>
+        <div class="panel-stack">
+          <section class="data-panel">
+            <div class="panel-header">
+              <h2 class="panel-title">Explained variation (R²)</h2>
+            </div>
+            <p class="panel-note">R² compares how strongly SIF, NDVI, and GPP are linked across the selected vegetation and climate categories.</p>
+            <div id="r2Plot"></div>
+          </section>
+          <section class="data-panel">
+            <div class="panel-header">
+              <h2 class="panel-title">Relationship strength (β ± SE)</h2>
+            </div>
+            <p class="panel-note">Standardized slope (β) compares the direction and relative strength of each relationship. Error bars show standard error.</p>
+            <div id="slopePlot"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+    <script>
+const relData = [{"crop":"Alfalfa","crop_group":"Other","climate":"Cold Desert","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.006073312,"slope":0.106079221,"se":0.005084867,"p_value":1.91e-24,"r2":0.908182725,"slope_std":0.952986214,"se_std":0.045681027,"p_value_std":1.91e-24},{"crop":"Alfalfa","crop_group":"Other","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.005771294,"slope":0.109182761,"se":0.003905109,"p_value":1.19e-29,"r2":0.946712092,"slope_std":0.972991311,"se_std":0.034800701,"p_value_std":1.19e-29},{"crop":"Alfalfa","crop_group":"Other","climate":"Hot Desert","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.014984687,"slope":0.055428075,"se":0.017668039,"p_value":0.003039906,"r2":0.182793948,"slope_std":0.427544089,"se_std":0.136282298,"p_value_std":0.003039906},{"crop":"Alfalfa","crop_group":"Other","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":39,"intercept":0.006705049,"slope":0.140070698,"se":0.005487248,"p_value":4.32e-25,"r2":0.946268291,"slope_std":0.972763224,"se_std":0.038107852,"p_value_std":4.32e-25},{"crop":"Alfalfa","crop_group":"Other","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":40,"intercept":0.003939395,"slope":0.135030719,"se":0.005234029,"p_value":1.09e-25,"r2":0.945989637,"slope_std":0.972619986,"se_std":0.037700469,"p_value_std":1.09e-25},{"crop":"Alfalfa","crop_group":"Other","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.00474758,"slope":0.135359499,"se":0.003633563,"p_value":6.47e-35,"r2":0.969268442,"slope_std":0.984514318,"se_std":0.026428101,"p_value_std":6.47e-35},{"crop":"Alfalfa","crop_group":"Other","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.004023318,"slope":0.126199428,"se":0.004245086,"p_value":9.12e-31,"r2":0.95257471,"slope_std":0.975999339,"se_std":0.032830588,"p_value_std":9.12e-31},{"crop":"Alfalfa","crop_group":"Other","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":35,"intercept":0.00684636,"slope":0.110226223,"se":0.005835834,"p_value":2.92e-19,"r2":0.915330331,"slope_std":0.956728975,"se_std":0.050653209,"p_value_std":2.92e-19},{"crop":"Alfalfa","crop_group":"Other","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.003838235,"slope":0.139834735,"se":0.002883161,"p_value":7.72e-40,"r2":0.981638339,"slope_std":0.990776634,"se_std":0.020428178,"p_value_std":7.72e-40},{"crop":"Alfalfa","crop_group":"Other","climate":"Cold Desert","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.210131535,"slope":1.21096416,"se":0.07337281,"p_value":4.23e-22,"r2":0.842296022,"slope_std":0.917766867,"se_std":0.055607867,"p_value_std":4.23e-22},{"crop":"Alfalfa","crop_group":"Other","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.132919105,"slope":1.431008647,"se":0.079361388,"p_value":8.87e-24,"r2":0.864411,"slope_std":0.92973706,"se_std":0.05156169,"p_value_std":8.87e-24},{"crop":"Alfalfa","crop_group":"Other","climate":"Hot Desert","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.156992749,"slope":1.115475227,"se":0.231124145,"p_value":1.3e-05,"r2":0.313530748,"slope_std":0.559938164,"se_std":0.116018022,"p_value_std":1.3e-05},{"crop":"Alfalfa","crop_group":"Other","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.08453327,"slope":1.165505418,"se":0.085903844,"p_value":1.49e-18,"r2":0.783051323,"slope_std":0.884901872,"se_std":0.065221895,"p_value_std":1.49e-18},{"crop":"Alfalfa","crop_group":"Other","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.029028772,"slope":0.907921547,"se":0.078937824,"p_value":8.85e-16,"r2":0.721752102,"slope_std":0.849559946,"se_std":0.073863666,"p_value_std":8.85e-16},{"crop":"Alfalfa","crop_group":"Other","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.128331243,"slope":1.260415957,"se":0.09948755,"p_value":2.24e-17,"r2":0.758871683,"slope_std":0.871132414,"se_std":0.068760499,"p_value_std":2.24e-17},{"crop":"Alfalfa","crop_group":"Other","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.136667759,"slope":1.249687618,"se":0.075882562,"p_value":4.65e-22,"r2":0.841722205,"slope_std":0.917454198,"se_std":0.055708942,"p_value_std":4.65e-22},{"crop":"Alfalfa","crop_group":"Other","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.004437844,"slope":0.808714808,"se":0.091435845,"p_value":7.13e-12,"r2":0.605346266,"slope_std":0.778040015,"se_std":0.087967656,"p_value_std":7.13e-12},{"crop":"Alfalfa","crop_group":"Other","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.101572518,"slope":1.294250034,"se":0.079351176,"p_value":7.04e-22,"r2":0.839131638,"slope_std":0.916041286,"se_std":0.056162991,"p_value_std":7.04e-22},{"crop":"Alfalfa","crop_group":"Other","climate":"Cold Desert","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.016673636,"slope":0.131534227,"se":0.011254958,"p_value":4.41e-15,"r2":0.756341831,"slope_std":0.869679154,"se_std":0.074415628,"p_value_std":4.41e-15},{"crop":"Alfalfa","crop_group":"Other","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.008444127,"slope":0.158809253,"se":0.01149102,"p_value":1.3e-17,"r2":0.812766333,"slope_std":0.901535542,"se_std":0.065232742,"p_value_std":1.3e-17},{"crop":"Alfalfa","crop_group":"Other","climate":"Hot Desert","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.034614315,"slope":0.157397955,"se":0.031007034,"p_value":7.49e-06,"r2":0.369336773,"slope_std":0.607730839,"se_std":0.119721573,"p_value_std":7.49e-06},{"crop":"Alfalfa","crop_group":"Other","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":39,"intercept":-0.009723237,"slope":0.176196733,"se":0.016467831,"p_value":7.04e-13,"r2":0.755740486,"slope_std":0.869333358,"se_std":0.081250283,"p_value_std":7.04e-13},{"crop":"Alfalfa","crop_group":"Other","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":40,"intercept":-0.005227058,"slope":0.141668799,"se":0.016390774,"p_value":1.67e-10,"r2":0.662836535,"slope_std":0.814147735,"se_std":0.094195131,"p_value_std":1.67e-10},{"crop":"Alfalfa","crop_group":"Other","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.012181754,"slope":0.171036714,"se":0.015414772,"p_value":2.46e-14,"r2":0.736705343,"slope_std":0.85831541,"se_std":0.077356121,"p_value_std":2.46e-14},{"crop":"Alfalfa","crop_group":"Other","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.013019495,"slope":0.156981743,"se":0.011185896,"p_value":7.46e-18,"r2":0.817389755,"slope_std":0.904096099,"se_std":0.064422301,"p_value_std":7.46e-18},{"crop":"Alfalfa","crop_group":"Other","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":35,"intercept":-0.004454576,"slope":0.123628632,"se":0.013511368,"p_value":1.43e-10,"r2":0.717276897,"slope_std":0.846922013,"se_std":0.092560071,"p_value_std":1.43e-10},{"crop":"Alfalfa","crop_group":"Other","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.011287322,"slope":0.184001558,"se":0.012662731,"p_value":2.11e-18,"r2":0.827551475,"slope_std":0.909698563,"se_std":0.06260419,"p_value_std":2.11e-18},{"crop":"Almonds","crop_group":"Perennial Crops","climate":"Cold Desert","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.008679087,"slope":0.134493163,"se":0.011569883,"p_value":5.28e-15,"r2":0.754364374,"slope_std":0.868541521,"se_std":0.074716985,"p_value_std":5.28e-15},{"crop":"Almonds","crop_group":"Perennial Crops","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.010984325,"slope":0.124372376,"se":0.00920414,"p_value":2.9e-17,"r2":0.805818283,"slope_std":0.897673818,"se_std":0.066432077,"p_value_std":2.9e-17},{"crop":"Almonds","crop_group":"Perennial Crops","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.011457391,"slope":0.125988165,"se":0.012970658,"p_value":1.63e-12,"r2":0.681962835,"slope_std":0.825810411,"se_std":0.085018336,"p_value_std":1.63e-12},{"crop":"Almonds","crop_group":"Perennial Crops","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.006145917,"slope":0.160650703,"se":0.0088536,"p_value":4.74e-22,"r2":0.882116473,"slope_std":0.939210559,"se_std":0.05176071,"p_value_std":4.74e-22},{"crop":"Almonds","crop_group":"Perennial Crops","climate":"Cold Desert","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.087796888,"slope":0.820716725,"se":0.13447923,"p_value":1.41e-07,"r2":0.422068158,"slope_std":0.649667729,"se_std":0.106451852,"p_value_std":1.41e-07},{"crop":"Almonds","crop_group":"Perennial Crops","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.212221167,"slope":1.228957531,"se":0.098251086,"p_value":3.68e-17,"r2":0.754167644,"slope_std":0.868428261,"se_std":0.069427965,"p_value_std":3.68e-17},{"crop":"Almonds","crop_group":"Perennial Crops","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.251209858,"slope":1.292853843,"se":0.07959075,"p_value":8.39e-22,"r2":0.838023281,"slope_std":0.915436115,"se_std":0.056356136,"p_value_std":8.39e-22},{"crop":"Almonds","crop_group":"Perennial Crops","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.159486001,"slope":1.054258334,"se":0.08344579,"p_value":2.5e-17,"r2":0.757856874,"slope_std":0.870549754,"se_std":0.068905039,"p_value_std":2.5e-17},{"crop":"Almonds","crop_group":"Perennial Crops","climate":"Cold Desert","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.009957759,"slope":0.134991404,"se":0.021224651,"p_value":9.96e-08,"r2":0.478988874,"slope_std":0.692090221,"se_std":0.108817103,"p_value_std":9.96e-08},{"crop":"Almonds","crop_group":"Perennial Crops","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.011746337,"slope":0.144550349,"se":0.019418296,"p_value":2.57e-09,"r2":0.557404451,"slope_std":0.746595239,"se_std":0.100294515,"p_value_std":2.57e-09},{"crop":"Almonds","crop_group":"Perennial Crops","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.018236329,"slope":0.158161612,"se":0.022192161,"p_value":7.45e-09,"r2":0.535830203,"slope_std":0.732004237,"se_std":0.102709851,"p_value_std":7.45e-09},{"crop":"Almonds","crop_group":"Perennial Crops","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.020141424,"slope":0.171350267,"se":0.018725864,"p_value":9.6e-12,"r2":0.655525849,"slope_std":0.809645508,"se_std":0.088481399,"p_value_std":9.6e-12},{"crop":"Apples","crop_group":"Perennial Crops","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":44,"intercept":0.009250717,"slope":0.108731989,"se":0.006552752,"p_value":4.71e-20,"r2":0.86764929,"slope_std":0.93147694,"se_std":0.056135616,"p_value_std":4.71e-20},{"crop":"Apples","crop_group":"Perennial Crops","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":44,"intercept":0.005431857,"slope":0.148826011,"se":0.004840728,"p_value":2.01e-30,"r2":0.957456617,"slope_std":0.978497122,"se_std":0.031826682,"p_value_std":2.01e-30},{"crop":"Apples","crop_group":"Perennial Crops","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":50,"intercept":-0.12177565,"slope":1.413284208,"se":0.147316062,"p_value":9.68e-13,"r2":0.657231555,"slope_std":0.81069819,"se_std":0.084504493,"p_value_std":9.68e-13},{"crop":"Apples","crop_group":"Perennial Crops","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.062397082,"slope":1.462237972,"se":0.100362936,"p_value":8.2e-20,"r2":0.806282803,"slope_std":0.897932516,"se_std":0.06163097,"p_value_std":8.2e-20},{"crop":"Apples","crop_group":"Perennial Crops","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.008496232,"slope":0.175082325,"se":0.014938406,"p_value":4.01e-15,"r2":0.757395318,"slope_std":0.870284619,"se_std":0.074254581,"p_value_std":4.01e-15},{"crop":"Apples","crop_group":"Perennial Crops","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":44,"intercept":-0.005198188,"slope":0.221731898,"se":0.019230751,"p_value":1.35e-14,"r2":0.759921124,"slope_std":0.871734549,"se_std":0.075605315,"p_value_std":1.35e-14},{"crop":"Barley","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.005330028,"slope":0.126883887,"se":0.005206302,"p_value":3.49e-27,"r2":0.931029729,"slope_std":0.964898818,"se_std":0.039591743,"p_value_std":3.49e-27},{"crop":"Barley","crop_group":"Cropland","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":37,"intercept":0.002002435,"slope":0.09921439,"se":0.00461014,"p_value":9.1e-22,"r2":0.929739945,"slope_std":0.964230234,"se_std":0.044804354,"p_value_std":9.1e-22},{"crop":"Barley","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.126478112,"slope":1.748876158,"se":0.060757894,"p_value":3.33e-33,"r2":0.942015046,"slope_std":0.970574596,"se_std":0.033718836,"p_value_std":3.33e-33},{"crop":"Barley","crop_group":"Cropland","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.019841781,"slope":1.422942263,"se":0.088559393,"p_value":1.34e-21,"r2":0.835042057,"slope_std":0.913806357,"se_std":0.056872396,"p_value_std":1.34e-21},{"crop":"Barley","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.009337658,"slope":0.214918221,"se":0.014633886,"p_value":1.43e-18,"r2":0.830566279,"slope_std":0.911354091,"se_std":0.062054544,"p_value_std":1.43e-18},{"crop":"Barley","crop_group":"Cropland","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":37,"intercept":-0.003883397,"slope":0.154575261,"se":0.012566253,"p_value":2.89e-14,"r2":0.812141322,"slope_std":0.901188838,"se_std":0.073262479,"p_value_std":2.89e-14},{"crop":"Blueberries","crop_group":"Perennial Crops","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.01138306,"slope":0.148366935,"se":0.007258012,"p_value":4.32e-24,"r2":0.904734643,"slope_std":0.951175401,"se_std":0.046530869,"p_value_std":4.32e-24},{"crop":"Blueberries","crop_group":"Perennial Crops","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.212509979,"slope":1.49986637,"se":0.151654735,"p_value":1.88e-13,"r2":0.657286246,"slope_std":0.81073192,"se_std":0.081974859,"p_value_std":1.88e-13},{"crop":"Blueberries","crop_group":"Perennial Crops","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.026742429,"slope":0.241245335,"se":0.025722505,"p_value":4.65e-12,"r2":0.666568748,"slope_std":0.816436616,"se_std":0.087051611,"p_value_std":4.65e-12},{"crop":"Citrus","crop_group":"Perennial Crops","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.006357549,"slope":0.173989755,"se":0.015511948,"p_value":1.72e-14,"r2":0.740886648,"slope_std":0.860747726,"se_std":0.076739428,"p_value_std":1.72e-14},{"crop":"Citrus","crop_group":"Perennial Crops","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.032421214,"slope":0.119958016,"se":0.010142492,"p_value":2.95e-15,"r2":0.760719205,"slope_std":0.872192184,"se_std":0.073744152,"p_value_std":2.95e-15},{"crop":"Citrus","crop_group":"Perennial Crops","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.05909378,"slope":0.641172708,"se":0.153946655,"p_value":0.00012,"r2":0.253801304,"slope_std":0.503786963,"se_std":0.120960105,"p_value_std":0.00012},{"crop":"Citrus","crop_group":"Perennial Crops","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.496064785,"slope":-0.273315323,"se":0.280780913,"p_value":0.334943368,"r2":0.018240129,"slope_std":-0.13505602,"se_std":0.138745067,"p_value_std":0.334943368},{"crop":"Citrus","crop_group":"Perennial Crops","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.009225714,"slope":0.127052996,"se":0.03254506,"p_value":0.000321,"r2":0.257265077,"slope_std":0.507213049,"se_std":0.129924359,"p_value_std":0.000321},{"crop":"Citrus","crop_group":"Perennial Crops","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.08508783,"slope":-0.013111296,"se":0.050147319,"p_value":0.794961223,"r2":0.001551204,"slope_std":-0.039385327,"se_std":0.150638701,"p_value_std":0.794961223},{"crop":"Clover/Wildflowers","crop_group":"Other","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.000429,"slope":0.148282027,"se":0.006267047,"p_value":1.17e-26,"r2":0.92713103,"slope_std":0.962876435,"se_std":0.040695368,"p_value_std":1.17e-26},{"crop":"Clover/Wildflowers","crop_group":"Other","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.103368165,"slope":0.958337734,"se":0.128372285,"p_value":1e-09,"r2":0.522161932,"slope_std":0.72260773,"se_std":0.096795526,"p_value_std":1e-09},{"crop":"Clover/Wildflowers","crop_group":"Other","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.012221036,"slope":0.139003985,"se":0.020591204,"p_value":2.65e-08,"r2":0.508770999,"slope_std":0.713281851,"se_std":0.10566123,"p_value_std":2.65e-08},{"crop":"Corn","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.004628197,"slope":0.153976351,"se":0.004772401,"p_value":2.91e-32,"r2":0.959445522,"slope_std":0.9795129,"se_std":0.030359392,"p_value_std":2.91e-32},{"crop":"Corn","crop_group":"Cropland","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.011380764,"slope":0.133959793,"se":0.004205902,"p_value":5.01e-32,"r2":0.958429778,"slope_std":0.978994269,"se_std":0.030737237,"p_value_std":5.01e-32},{"crop":"Corn","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.010245872,"slope":0.137752211,"se":0.003964816,"p_value":1.26e-33,"r2":0.964831559,"slope_std":0.982258397,"se_std":0.028271589,"p_value_std":1.26e-33},{"crop":"Corn","crop_group":"Cropland","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":42,"intercept":0.011764394,"slope":0.129775136,"se":0.004309121,"p_value":4.18e-29,"r2":0.95776119,"slope_std":0.978652742,"se_std":0.032495696,"p_value_std":4.18e-29},{"crop":"Corn","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.137886301,"slope":1.152149848,"se":0.054239519,"p_value":5.48e-27,"r2":0.898450444,"slope_std":0.947866258,"se_std":0.044622503,"p_value_std":5.48e-27},{"crop":"Corn","crop_group":"Cropland","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.160150891,"slope":1.678446808,"se":0.092924635,"p_value":8.23e-24,"r2":0.864811919,"slope_std":0.929952643,"se_std":0.051485403,"p_value_std":8.23e-24},{"crop":"Corn","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.145856784,"slope":1.583478358,"se":0.086075189,"p_value":3.65e-24,"r2":0.869039219,"slope_std":0.93222273,"se_std":0.050674041,"p_value_std":3.65e-24},{"crop":"Corn","crop_group":"Cropland","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.110628224,"slope":1.719726331,"se":0.086275389,"p_value":9.97e-26,"r2":0.886242993,"slope_std":0.941404798,"se_std":0.047228482,"p_value_std":9.97e-26},{"crop":"Corn","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.015324334,"slope":0.174727794,"se":0.012256499,"p_value":4.23e-18,"r2":0.822029191,"slope_std":0.906658255,"se_std":0.063598672,"p_value_std":4.23e-18},{"crop":"Corn","crop_group":"Cropland","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.010289399,"slope":0.227536449,"se":0.016312172,"p_value":9.3e-18,"r2":0.815568623,"slope_std":0.90308838,"se_std":0.064742739,"p_value_std":9.3e-18},{"crop":"Corn","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.010438223,"slope":0.220956023,"se":0.015741176,"p_value":7.41e-18,"r2":0.81745183,"slope_std":0.904130428,"se_std":0.06441135,"p_value_std":7.41e-18},{"crop":"Corn","crop_group":"Cropland","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":42,"intercept":-0.005383567,"slope":0.226438063,"se":0.015062685,"p_value":4.74e-18,"r2":0.849619841,"slope_std":0.921748253,"se_std":0.061314794,"p_value_std":4.74e-18},{"crop":"Cotton","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.014471176,"slope":0.100992759,"se":0.010149619,"p_value":7.79e-13,"r2":0.692330172,"slope_std":0.832063803,"se_std":0.083621146,"p_value_std":7.79e-13},{"crop":"Cotton","crop_group":"Cropland","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.011454967,"slope":0.110122553,"se":0.010475285,"p_value":1.4e-13,"r2":0.715237836,"slope_std":0.84571735,"se_std":0.080447917,"p_value_std":1.4e-13},{"crop":"Cotton","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.018446672,"slope":0.11579734,"se":0.005721067,"p_value":6.4e-24,"r2":0.903015009,"slope_std":0.950271019,"se_std":0.046948955,"p_value_std":6.4e-24},{"crop":"Cotton","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.143029007,"slope":1.018770864,"se":0.089125581,"p_value":1.11e-15,"r2":0.71925837,"slope_std":0.848091015,"se_std":0.074193921,"p_value_std":1.11e-15},{"crop":"Cotton","crop_group":"Cropland","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.101996405,"slope":0.923364431,"se":0.099871462,"p_value":1.74e-12,"r2":0.626318309,"slope_std":0.791402747,"se_std":0.085598435,"p_value_std":1.74e-12},{"crop":"Cotton","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.204803541,"slope":1.524660994,"se":0.104406762,"p_value":7.45e-20,"r2":0.80700105,"slope_std":0.898332372,"se_std":0.061516609,"p_value_std":7.45e-20},{"crop":"Cotton","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.002377449,"slope":0.115395913,"se":0.015620449,"p_value":3.1e-09,"r2":0.553639414,"slope_std":0.744069496,"se_std":0.1007202,"p_value_std":3.1e-09},{"crop":"Cotton","crop_group":"Cropland","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.005091891,"slope":0.132981086,"se":0.017379007,"p_value":1.28e-09,"r2":0.57094266,"slope_std":0.755607478,"se_std":0.098748687,"p_value_std":1.28e-09},{"crop":"Cotton","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.007069794,"slope":0.184732374,"se":0.015937841,"p_value":5.81e-15,"r2":0.753289545,"slope_std":0.867922546,"se_std":0.074880276,"p_value_std":5.81e-15},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.009938306,"slope":0.099734923,"se":0.003248086,"p_value":2.34e-31,"r2":0.95541337,"slope_std":0.97745249,"se_std":0.031832884,"p_value_std":2.34e-31},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.015143323,"slope":0.094618626,"se":0.003927858,"p_value":5.63e-27,"r2":0.92951942,"slope_std":0.964115875,"se_std":0.040022886,"p_value_std":5.63e-27},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.002718424,"slope":0.124617535,"se":0.006299722,"p_value":1.59e-23,"r2":0.898921484,"slope_std":0.9481147,"se_std":0.047929521,"p_value_std":1.59e-23},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Subarctic","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":45,"intercept":0.003019804,"slope":0.115553827,"se":0.007226964,"p_value":1.04e-19,"r2":0.856021904,"slope_std":0.925214518,"se_std":0.057864737,"p_value_std":1.04e-19},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.012398856,"slope":0.091001049,"se":0.003839047,"p_value":1.09e-26,"r2":0.927378737,"slope_std":0.963005056,"se_std":0.04062614,"p_value_std":1.09e-26},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.006904609,"slope":0.125151035,"se":0.005837348,"p_value":6.39e-25,"r2":0.912639659,"slope_std":0.955321757,"se_std":0.044558527,"p_value_std":6.39e-25},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.179311738,"slope":1.714622637,"se":0.127990221,"p_value":2.48e-18,"r2":0.778709758,"slope_std":0.882445329,"se_std":0.065871271,"p_value_std":2.48e-18},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.267421021,"slope":1.814108595,"se":0.229219602,"p_value":1.98e-10,"r2":0.551198016,"slope_std":0.742427111,"se_std":0.093808523,"p_value_std":1.98e-10},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.028063351,"slope":0.672838581,"se":0.062273665,"p_value":8.63e-15,"r2":0.695954734,"slope_std":0.834239015,"se_std":0.077211864,"p_value_std":8.63e-15},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Subarctic","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.039687586,"slope":0.785217124,"se":0.064970119,"p_value":1.38e-16,"r2":0.741204809,"slope_std":0.860932523,"se_std":0.071234932,"p_value_std":1.38e-16},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.247040971,"slope":1.883599531,"se":0.218178842,"p_value":1.51e-11,"r2":0.593734148,"slope_std":0.770541464,"se_std":0.089252435,"p_value_std":1.51e-11},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.070380589,"slope":3.679144447,"se":0.283207821,"p_value":8.39e-18,"r2":0.767934261,"slope_std":0.876318584,"se_std":0.067455975,"p_value_std":8.39e-18},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.009344784,"slope":0.173393417,"se":0.014084879,"p_value":7.56e-16,"r2":0.774994822,"slope_std":0.880337902,"se_std":0.071510517,"p_value_std":7.56e-16},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.015501607,"slope":0.190377576,"se":0.022789394,"p_value":1.26e-10,"r2":0.613307947,"slope_std":0.7831398,"se_std":0.093746764,"p_value_std":1.26e-10},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.00249724,"slope":0.091026301,"se":0.008218375,"p_value":2.6e-14,"r2":0.736015811,"slope_std":0.857913639,"se_std":0.077457347,"p_value_std":2.6e-14},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Subarctic","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":45,"intercept":-0.003176141,"slope":0.099505812,"se":0.009071496,"p_value":4.84e-14,"r2":0.736713762,"slope_std":0.858320314,"se_std":0.07824919,"p_value_std":4.84e-14},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.012720254,"slope":0.182816505,"se":0.021514023,"p_value":7.87e-11,"r2":0.621369791,"slope_std":0.788270126,"se_std":0.09276439,"p_value_std":7.87e-11},{"crop":"Deciduous Forest","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.003678982,"slope":0.465661025,"se":0.03819558,"p_value":1.05e-15,"r2":0.771585704,"slope_std":0.878399513,"se_std":0.072050219,"p_value_std":1.05e-15},{"crop":"Durum Wheat","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":44,"intercept":0.009572777,"slope":0.147492835,"se":0.00664043,"p_value":7.79e-25,"r2":0.921545701,"slope_std":0.959971719,"se_std":0.043219897,"p_value_std":7.79e-25},{"crop":"Durum Wheat","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":52,"intercept":-0.104581337,"slope":1.184505468,"se":0.080238478,"p_value":7.36e-20,"r2":0.813381211,"slope_std":0.901876494,"se_std":0.061093173,"p_value_std":7.36e-20},{"crop":"Durum Wheat","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":45,"intercept":-0.008183502,"slope":0.187703461,"se":0.012665617,"p_value":1.67e-18,"r2":0.836271612,"slope_std":0.914478874,"se_std":0.061706053,"p_value_std":1.67e-18},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Cold Desert","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.004149938,"slope":0.215052718,"se":0.021443971,"p_value":6.12e-13,"r2":0.695654528,"slope_std":0.834059067,"se_std":0.083168158,"p_value_std":6.12e-13},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.003380094,"slope":0.233847388,"se":0.014626396,"p_value":6.05e-20,"r2":0.853146041,"slope_std":0.92365905,"se_std":0.057771879,"p_value_std":6.05e-20},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.004056362,"slope":0.128554797,"se":0.004421604,"p_value":2.32e-30,"r2":0.950523545,"slope_std":0.974947971,"se_std":0.033533042,"p_value_std":2.32e-30},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.006795513,"slope":0.156586083,"se":0.006799686,"p_value":3.54e-26,"r2":0.92338613,"slope_std":0.960929826,"se_std":0.04172798,"p_value_std":3.54e-26},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean (cold summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":-0.007457629,"slope":0.239952521,"se":0.018440974,"p_value":1.1e-16,"r2":0.793727551,"slope_std":0.890913885,"se_std":0.068469046,"p_value_std":1.1e-16},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.008098451,"slope":0.134674145,"se":0.009924862,"p_value":2.5e-17,"r2":0.807125711,"slope_std":0.898401754,"se_std":0.066208055,"p_value_std":2.5e-17},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":-0.000127,"slope":0.246101668,"se":0.009948749,"p_value":1.89e-27,"r2":0.932918295,"slope_std":0.965876956,"se_std":0.039045924,"p_value_std":1.89e-27},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (cold summer)","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":40,"intercept":0.000374,"slope":0.196390169,"se":0.008961754,"p_value":3.67e-23,"r2":0.926674139,"slope_std":0.962639153,"se_std":0.04392753,"p_value_std":3.67e-23},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":41,"intercept":-0.000482,"slope":0.184555526,"se":0.008209771,"p_value":6.24e-24,"r2":0.928354879,"slope_std":0.963511743,"se_std":0.042860872,"p_value_std":6.24e-24},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.002559515,"slope":0.131221425,"se":0.005840567,"p_value":9.65e-26,"r2":0.919821702,"slope_std":0.959073356,"se_std":0.042687633,"p_value_std":9.65e-26},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Subarctic","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":-0.002411972,"slope":0.22665015,"se":0.009398035,"p_value":5.37e-27,"r2":0.929669558,"slope_std":0.964193735,"se_std":0.039980234,"p_value_std":5.37e-27},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Subpolar Oceanic","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":44,"intercept":-0.00200304,"slope":0.232455291,"se":0.010892009,"p_value":3.65e-24,"r2":0.915573351,"slope_std":0.956855972,"se_std":0.044834789,"p_value_std":3.65e-24},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":-0.001048641,"slope":0.236634863,"se":0.011886752,"p_value":1.24e-23,"r2":0.900069579,"slope_std":0.948719969,"se_std":0.047656541,"p_value_std":1.24e-23},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Tundra","climate_group":"Polar","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":44,"intercept":-0.007056497,"slope":0.230768372,"se":0.027863811,"p_value":2.27e-10,"r2":0.62022465,"slope_std":0.787543427,"se_std":0.095090853,"p_value_std":2.27e-10},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.001738117,"slope":0.189620619,"se":0.008148264,"p_value":2.31e-26,"r2":0.924857355,"slope_std":0.961695042,"se_std":0.041325384,"p_value_std":2.31e-26},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Cold Desert","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.019667376,"slope":0.253802548,"se":0.060317996,"p_value":0.000105,"r2":0.25769692,"slope_std":0.507638572,"se_std":0.120643949,"p_value_std":0.000105},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.008480944,"slope":0.283462719,"se":0.106973348,"p_value":0.010696481,"r2":0.121018135,"slope_std":0.347876609,"se_std":0.131281905,"p_value_std":0.010696481},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.105700739,"slope":0.798080366,"se":0.084020184,"p_value":7.23e-13,"r2":0.638873663,"slope_std":0.799295729,"se_std":0.084148135,"p_value_std":7.23e-13},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.096943512,"slope":0.786842595,"se":0.138258993,"p_value":6.23e-07,"r2":0.388403843,"slope_std":0.623220541,"se_std":0.109508363,"p_value_std":6.23e-07},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean (cold summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.048356447,"slope":0.332849816,"se":0.073956743,"p_value":3.95e-05,"r2":0.284264893,"slope_std":0.533164978,"se_std":0.118465276,"p_value_std":3.95e-05},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.126824223,"slope":0.659583809,"se":0.100182073,"p_value":2.47e-08,"r2":0.459442786,"slope_std":0.67782209,"se_std":0.102952227,"p_value_std":2.47e-08},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.01045377,"slope":0.904188531,"se":0.117784402,"p_value":4.67e-10,"r2":0.536071834,"slope_std":0.732169266,"se_std":0.095376259,"p_value_std":4.67e-10},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (cold summer)","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":45,"intercept":-0.008884685,"slope":0.584403976,"se":0.073426784,"p_value":5.42e-10,"r2":0.595658406,"slope_std":0.771789094,"se_std":0.096970577,"p_value_std":5.42e-10},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":47,"intercept":-0.01508243,"slope":0.60130201,"se":0.081162677,"p_value":2.53e-09,"r2":0.549492685,"slope_std":0.741277738,"se_std":0.100056352,"p_value_std":2.53e-09},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Hot Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.054259266,"slope":0.753042397,"se":0.082142108,"p_value":2.29e-12,"r2":0.622345555,"slope_std":0.78888881,"se_std":0.086052246,"p_value_std":2.29e-12},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Oceanic Climate","climate_group":"Oceanic","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.065458263,"slope":-0.162507773,"se":0.189195487,"p_value":0.394392311,"r2":0.014259981,"slope_std":-0.119415162,"se_std":0.139026025,"p_value_std":0.394392311},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Subarctic","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.023615029,"slope":0.52223845,"se":0.06954116,"p_value":8.54e-10,"r2":0.525125154,"slope_std":0.724655197,"se_std":0.09649493,"p_value_std":8.54e-10},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Subpolar Oceanic","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":50,"intercept":0.045030865,"slope":0.439537482,"se":0.075224896,"p_value":4.35e-07,"r2":0.415634712,"slope_std":0.64469738,"se_std":0.110337105,"p_value_std":4.35e-07},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.065480605,"slope":0.62533271,"se":0.108581797,"p_value":4.88e-07,"r2":0.394062936,"slope_std":0.627744324,"se_std":0.109000545,"p_value_std":4.88e-07},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Tundra","climate_group":"Polar","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.049525401,"slope":0.244925692,"se":0.065021907,"p_value":0.00043,"r2":0.217658438,"slope_std":0.466538786,"se_std":0.123854877,"p_value_std":0.00043},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.035217402,"slope":0.8910587,"se":0.084678824,"p_value":2.21e-14,"r2":0.684658471,"slope_std":0.827440917,"se_std":0.078633118,"p_value_std":2.21e-14},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Cold Desert","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.00306674,"slope":0.065986201,"se":0.016830021,"p_value":0.000305,"r2":0.258912824,"slope_std":0.50883477,"se_std":0.129780162,"p_value_std":0.000305},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.009234926,"slope":0.099242009,"se":0.026682345,"p_value":0.000563,"r2":0.239199898,"slope_std":0.489080667,"se_std":0.13149491,"p_value_std":0.000563},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.009158765,"slope":0.102304469,"se":0.01235951,"p_value":1.62e-10,"r2":0.608941592,"slope_std":0.780347097,"se_std":0.094274552,"p_value_std":1.62e-10},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.011605405,"slope":0.132505656,"se":0.025906044,"p_value":6.59e-06,"r2":0.372877595,"slope_std":0.610637041,"se_std":0.119385016,"p_value_std":6.59e-06},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean (cold summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.011751298,"slope":0.133989246,"se":0.015694975,"p_value":6.92e-11,"r2":0.623551055,"slope_std":0.78965249,"se_std":0.092496799,"p_value_std":6.92e-11},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.010505704,"slope":0.093643628,"se":0.016016948,"p_value":5.67e-07,"r2":0.437210323,"slope_std":0.661218816,"se_std":0.113095864,"p_value_std":5.67e-07},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.002217999,"slope":0.222629484,"se":0.030988486,"p_value":6.14e-09,"r2":0.539814701,"slope_std":0.734720832,"se_std":0.102268063,"p_value_std":6.14e-09},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (cold summer)","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.003078032,"slope":0.121161856,"se":0.013063151,"p_value":6.46e-12,"r2":0.661609336,"slope_std":0.813393715,"se_std":0.087696619,"p_value_std":6.46e-12},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.002188292,"slope":0.106848025,"se":0.01531486,"p_value":1.24e-08,"r2":0.525223115,"slope_std":0.724722785,"se_std":0.103876772,"p_value_std":1.24e-08},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.007939272,"slope":0.111681915,"se":0.010741632,"p_value":1.98e-13,"r2":0.710716374,"slope_std":0.84303996,"se_std":0.081084079,"p_value_std":1.98e-13},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Subarctic","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.011901808,"slope":0.136204906,"se":0.015279084,"p_value":2.04e-11,"r2":0.643631593,"slope_std":0.802266535,"se_std":0.089996011,"p_value_std":2.04e-11},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Subpolar Oceanic","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.003444512,"slope":0.120444407,"se":0.017544502,"p_value":1.8e-08,"r2":0.517169668,"slope_std":0.719145095,"se_std":0.104754077,"p_value_std":1.8e-08},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.02325419,"slope":0.167180505,"se":0.02957166,"p_value":1.09e-06,"r2":0.420755106,"slope_std":0.648656385,"se_std":0.114737338,"p_value_std":1.09e-06},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Tundra","climate_group":"Polar","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":44,"intercept":-0.009204814,"slope":0.126646355,"se":0.015816984,"p_value":5.47e-10,"r2":0.604191102,"slope_std":0.777297306,"se_std":0.097077399,"p_value_std":5.47e-10},{"crop":"Evergreen Forest","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.007564382,"slope":0.185139201,"se":0.016289676,"p_value":1.12e-14,"r2":0.745918872,"slope_std":0.863665949,"se_std":0.075990599,"p_value_std":1.12e-14},{"crop":"Fallow/Idle Cropland","crop_group":"Other","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.007294533,"slope":0.159825912,"se":0.007103363,"p_value":9.09e-26,"r2":0.92003657,"slope_std":0.959185368,"se_std":0.042630396,"p_value_std":9.09e-26},{"crop":"Fallow/Idle Cropland","crop_group":"Other","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.170506636,"slope":1.10233734,"se":0.076206011,"p_value":1.1e-19,"r2":0.804029183,"slope_std":0.896676744,"se_std":0.061988427,"p_value_std":1.1e-19},{"crop":"Fallow/Idle Cropland","crop_group":"Other","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.020061781,"slope":0.175660669,"se":0.013592282,"p_value":1.4e-16,"r2":0.791487373,"slope_std":0.889655761,"se_std":0.068839838,"p_value_std":1.4e-16},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.0119801,"slope":0.112051887,"se":0.009486417,"p_value":3.09e-15,"r2":0.760243056,"slope_std":0.87191918,"se_std":0.073817487,"p_value_std":3.09e-15},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.017536347,"slope":0.078481381,"se":0.010581839,"p_value":2.82e-09,"r2":0.555582997,"slope_std":0.745374401,"se_std":0.100500679,"p_value_std":2.82e-09},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.008326972,"slope":0.158345945,"se":0.009192832,"p_value":3.55e-21,"r2":0.870853537,"slope_std":0.933195337,"se_std":0.054176996,"p_value_std":3.55e-21},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.009519108,"slope":0.19230731,"se":0.014072448,"p_value":1.94e-17,"r2":0.809314476,"slope_std":0.899619072,"se_std":0.065831314,"p_value_std":1.94e-17},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.017382713,"slope":0.183154244,"se":0.010326904,"p_value":1.15e-21,"r2":0.877284493,"slope_std":0.936634664,"se_std":0.052810878,"p_value_std":1.15e-21},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.173564943,"slope":1.173827455,"se":0.076990668,"p_value":1.24e-20,"r2":0.820075038,"slope_std":0.905579946,"se_std":0.059396468,"p_value_std":1.24e-20},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.234084482,"slope":1.320151491,"se":0.096967682,"p_value":1.3e-18,"r2":0.784218679,"slope_std":0.885561223,"se_std":0.065046186,"p_value_std":1.3e-18},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.096577234,"slope":0.854897498,"se":0.117788357,"p_value":2.13e-09,"r2":0.508088958,"slope_std":0.71280359,"se_std":0.098210562,"p_value_std":2.13e-09},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.092785426,"slope":0.719358155,"se":0.140656292,"p_value":4.8e-06,"r2":0.339001858,"slope_std":0.582238661,"se_std":0.11384528,"p_value_std":4.8e-06},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.000777,"slope":1.442408935,"se":0.125037623,"p_value":7.93e-16,"r2":0.722938518,"slope_std":0.850257913,"se_std":0.073706025,"p_value_std":7.93e-16},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.003891539,"slope":0.121192749,"se":0.016508012,"p_value":3.62e-09,"r2":0.550547543,"slope_std":0.74198891,"se_std":0.101068435,"p_value_std":3.62e-09},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.000362,"slope":0.102820688,"se":0.017313422,"p_value":4.15e-07,"r2":0.444929197,"slope_std":0.667030132,"se_std":0.11231761,"p_value_std":4.15e-07},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.008079378,"slope":0.141274438,"se":0.020196556,"p_value":1.16e-08,"r2":0.526523807,"slope_std":0.725619602,"se_std":0.103734385,"p_value_std":1.16e-08},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.022730865,"slope":0.180461024,"se":0.027618035,"p_value":5.53e-08,"r2":0.492476068,"slope_std":0.701766391,"se_std":0.107399417,"p_value_std":5.53e-08},{"crop":"Grapes","crop_group":"Perennial Crops","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.014234144,"slope":0.295951332,"se":0.026499317,"p_value":1.99e-14,"r2":0.739228499,"slope_std":0.859783984,"se_std":0.076984577,"p_value_std":1.99e-14},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Cold Desert","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.002698175,"slope":0.062471294,"se":0.005668923,"p_value":3.07e-14,"r2":0.734041745,"slope_std":0.856762362,"se_std":0.07774642,"p_value_std":3.07e-14},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.006989713,"slope":0.109950553,"se":0.008524465,"p_value":1.5e-16,"r2":0.790839213,"slope_std":0.88929141,"se_std":0.068946749,"p_value_std":1.5e-16},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Hot Desert","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.003009331,"slope":0.051387488,"se":0.01007637,"p_value":6.93e-06,"r2":0.371500166,"slope_std":0.609508134,"se_std":0.119516054,"p_value_std":6.93e-06},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.009371791,"slope":0.090648284,"se":0.007603774,"p_value":2.26e-15,"r2":0.763595684,"slope_std":0.873839621,"se_std":0.073299559,"p_value_std":2.26e-15},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.006944383,"slope":0.128239183,"se":0.00425862,"p_value":5.32e-31,"r2":0.953722383,"slope_std":0.97658711,"se_std":0.032430911,"p_value_std":5.32e-31},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.007323868,"slope":0.154827954,"se":0.00581096,"p_value":8.81e-29,"r2":0.941637555,"slope_std":0.970380108,"se_std":0.036420039,"p_value_std":8.81e-29},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.010349767,"slope":0.084159367,"se":0.007756341,"p_value":5.08e-14,"r2":0.727943451,"slope_std":0.853196021,"se_std":0.078632712,"p_value_std":5.08e-14},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.007126245,"slope":0.136406507,"se":0.011644545,"p_value":4.08e-15,"r2":0.757204453,"slope_std":0.870174955,"se_std":0.074283784,"p_value_std":4.08e-15},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (cold summer)","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":36,"intercept":0.001394413,"slope":0.19223606,"se":0.027946726,"p_value":6.37e-08,"r2":0.581878,"slope_std":0.762809282,"se_std":0.110895022,"p_value_std":6.37e-08},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.003681729,"slope":0.096917405,"se":0.005083672,"p_value":6.85e-23,"r2":0.89201215,"slope_std":0.944463948,"se_std":0.049540583,"p_value_std":6.85e-23},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.007492545,"slope":0.135693997,"se":0.004174874,"p_value":2.13e-32,"r2":0.960015084,"slope_std":0.979803594,"se_std":0.030145449,"p_value_std":2.13e-32},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.007456352,"slope":0.151636756,"se":0.005774371,"p_value":1.61e-28,"r2":0.94002211,"slope_std":0.969547374,"se_std":0.036920643,"p_value_std":1.61e-28},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":41,"intercept":0.008170729,"slope":0.116079142,"se":0.005492172,"p_value":5.79e-23,"r2":0.919704224,"slope_std":0.959012109,"se_std":0.045374729,"p_value_std":5.79e-23},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Oceanic Climate","climate_group":"Oceanic","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.033454795,"slope":0.009469699,"se":0.03877718,"p_value":0.808204894,"r2":0.001353565,"slope_std":0.036790823,"se_std":0.150653609,"p_value_std":0.808204894},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Subarctic","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":38,"intercept":0.003940269,"slope":0.12721544,"se":0.015245738,"p_value":6.18e-10,"r2":0.659180679,"slope_std":0.811899426,"se_std":0.097299555,"p_value_std":6.18e-10},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.00657143,"slope":0.124362732,"se":0.008641207,"p_value":2.99e-18,"r2":0.824788191,"slope_std":0.908178502,"se_std":0.063103776,"p_value_std":2.99e-18},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Tropical Monsoon","climate_group":"Tropical","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.016076868,"slope":0.084769071,"se":0.005441207,"p_value":1.6e-19,"r2":0.846533818,"slope_std":0.920072724,"se_std":0.059058173,"p_value_std":1.6e-19},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.022525408,"slope":0.085510286,"se":0.005565671,"p_value":2.69e-19,"r2":0.842884481,"slope_std":0.918087404,"se_std":0.059756232,"p_value_std":2.69e-19},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Tundra","climate_group":"Polar","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":31,"intercept":0.00185452,"slope":0.108028612,"se":0.017067501,"p_value":6.48e-07,"r2":0.580090316,"slope_std":0.761636603,"se_std":0.120331394,"p_value_std":6.48e-07},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.005277342,"slope":0.120463265,"se":0.00527901,"p_value":5.13e-26,"r2":0.922085293,"slope_std":0.960252723,"se_std":0.042080742,"p_value_std":5.13e-26},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Cold Desert","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.043034933,"slope":0.648955739,"se":0.233194903,"p_value":0.007536456,"r2":0.131833267,"slope_std":0.363088511,"se_std":0.130471748,"p_value_std":0.007536456},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.071742312,"slope":0.66050416,"se":0.098582041,"p_value":1.62e-08,"r2":0.468143957,"slope_std":0.684210462,"se_std":0.102120272,"p_value_std":1.62e-08},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Hot Desert","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.003470285,"slope":0.376422154,"se":0.267238561,"p_value":0.1650322,"r2":0.037446133,"slope_std":0.193510032,"se_std":0.137381241,"p_value_std":0.1650322},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.174753017,"slope":1.175005496,"se":0.105244586,"p_value":2.64e-15,"r2":0.709644172,"slope_std":0.842403806,"se_std":0.075453638,"p_value_std":2.64e-15},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.097369489,"slope":0.904011501,"se":0.082065196,"p_value":4.3e-15,"r2":0.704085769,"slope_std":0.839098188,"se_std":0.076172435,"p_value_std":4.3e-15},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.069109416,"slope":0.71429367,"se":0.080685042,"p_value":6.93e-12,"r2":0.605791595,"slope_std":0.778326149,"se_std":0.087918011,"p_value_std":6.93e-12},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.176222994,"slope":1.116232852,"se":0.089885052,"p_value":4.86e-17,"r2":0.751483611,"slope_std":0.866881544,"se_std":0.069805948,"p_value_std":4.86e-17},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.040142191,"slope":0.525941594,"se":0.073203249,"p_value":2.78e-09,"r2":0.50301874,"slope_std":0.709238141,"se_std":0.098715402,"p_value_std":2.78e-09},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (cold summer)","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.022994671,"slope":0.340717233,"se":0.054021162,"p_value":6.75e-08,"r2":0.438199743,"slope_std":0.661966572,"se_std":0.104955664,"p_value_std":6.75e-08},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.031888905,"slope":0.589927479,"se":0.058096274,"p_value":7.63e-14,"r2":0.669067498,"slope_std":0.817965463,"se_std":0.080553539,"p_value_std":7.63e-14},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Hot Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.097309715,"slope":0.839790254,"se":0.066267798,"p_value":2.22e-17,"r2":0.758975432,"slope_std":0.871191961,"se_std":0.068745705,"p_value_std":2.22e-17},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.091418663,"slope":0.755401322,"se":0.06293582,"p_value":1.79e-16,"r2":0.738549223,"slope_std":0.859388866,"se_std":0.071599482,"p_value_std":1.79e-16},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":48,"intercept":-0.120641196,"slope":1.174011748,"se":0.07461893,"p_value":3.9e-20,"r2":0.843292672,"slope_std":0.918309682,"se_std":0.05836678,"p_value_std":3.9e-20},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Oceanic Climate","climate_group":"Oceanic","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.020413927,"slope":0.05304061,"se":0.076004252,"p_value":0.488432079,"r2":0.009458963,"slope_std":0.097257202,"se_std":0.139364175,"p_value_std":0.488432079},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Subarctic","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.007716103,"slope":0.345565964,"se":0.061607696,"p_value":8.34e-07,"r2":0.381536387,"slope_std":0.617686317,"se_std":0.110121467,"p_value_std":8.34e-07},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.063308178,"slope":0.663814533,"se":0.070002313,"p_value":7.64e-13,"r2":0.638099146,"slope_std":0.798811083,"se_std":0.084238324,"p_value_std":7.64e-13},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Tropical Monsoon","climate_group":"Tropical","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.367212664,"slope":0.183433645,"se":0.317994933,"p_value":0.566582059,"r2":0.006482209,"slope_std":0.08051217,"se_std":0.139573425,"p_value_std":0.566582059},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.298743395,"slope":0.358244451,"se":0.369742669,"p_value":0.337166696,"r2":0.018074576,"slope_std":0.134441722,"se_std":0.138756764,"p_value_std":0.337166696},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Tundra","climate_group":"Polar","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.068305478,"slope":0.188471293,"se":0.130167703,"p_value":0.153761831,"r2":0.039483757,"slope_std":0.198705201,"se_std":0.137235753,"p_value_std":0.153761831},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.071784938,"slope":0.935319916,"se":0.064951241,"p_value":1.33e-19,"r2":0.802608492,"slope_std":0.895884196,"se_std":0.062212713,"p_value_std":1.33e-19},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Cold Desert","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.004829529,"slope":0.076882356,"se":0.016947982,"p_value":4.38e-05,"r2":0.318660528,"slope_std":0.564500246,"se_std":0.124438692,"p_value_std":4.38e-05},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.003125383,"slope":0.087996267,"se":0.01215184,"p_value":5.07e-09,"r2":0.543747355,"slope_std":0.737392267,"se_std":0.101830144,"p_value_std":5.07e-09},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Hot Desert","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.006087353,"slope":0.083178724,"se":0.022934192,"p_value":0.000742,"r2":0.230150034,"slope_std":0.479739548,"se_std":0.132274677,"p_value_std":0.000742},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.006592154,"slope":0.106750961,"se":0.013967035,"p_value":1.32e-09,"r2":0.570381497,"slope_std":0.755236054,"se_std":0.098813242,"p_value_std":1.32e-09},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.007961379,"slope":0.126374057,"se":0.011911143,"p_value":1.04e-13,"r2":0.718969178,"slope_std":0.847920502,"se_std":0.07991911,"p_value_std":1.04e-13},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.007213129,"slope":0.124901902,"se":0.012981577,"p_value":2.17e-12,"r2":0.677827394,"slope_std":0.823302735,"se_std":0.085569298,"p_value_std":2.17e-12},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.00927085,"slope":0.113300246,"se":0.01069875,"p_value":1.11e-13,"r2":0.718217962,"slope_std":0.847477411,"se_std":0.080025854,"p_value_std":1.11e-13},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.003414341,"slope":0.098769574,"se":0.009816985,"p_value":5.54e-13,"r2":0.697023002,"slope_std":0.834879035,"se_std":0.082980967,"p_value_std":5.54e-13},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (cold summer)","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":36,"intercept":0.000503,"slope":0.105541789,"se":0.010305073,"p_value":6.31e-12,"r2":0.755207357,"slope_std":0.869026672,"se_std":0.084851539,"p_value_std":6.31e-12},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-1.01e-05,"slope":0.062566557,"se":0.005683982,"p_value":3.19e-14,"r2":0.733600579,"slope_std":0.856504862,"se_std":0.077810875,"p_value_std":3.19e-14},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.006112631,"slope":0.115871489,"se":0.01021646,"p_value":1.2e-14,"r2":0.745124004,"slope_std":0.863205656,"se_std":0.07610937,"p_value_std":1.2e-14},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.007671062,"slope":0.119931314,"se":0.01153232,"p_value":1.97e-13,"r2":0.710814204,"slope_std":0.84309798,"se_std":0.081070367,"p_value_std":1.97e-13},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":44,"intercept":-0.006503298,"slope":0.141735563,"se":0.00912614,"p_value":5.19e-19,"r2":0.851696692,"slope_std":0.922874147,"se_std":0.05942248,"p_value_std":5.19e-19},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Oceanic Climate","climate_group":"Oceanic","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.031701847,"slope":0.137917306,"se":0.019715434,"p_value":1.16e-08,"r2":0.526553834,"slope_std":0.725640292,"se_std":0.103731095,"p_value_std":1.16e-08},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Subarctic","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":38,"intercept":-0.001762368,"slope":0.083368304,"se":0.010733007,"p_value":3.32e-09,"r2":0.626298552,"slope_std":0.791390265,"se_std":0.101885209,"p_value_std":3.32e-09},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.003755167,"slope":0.099345923,"se":0.008947271,"p_value":2.4e-14,"r2":0.736979674,"slope_std":0.858475203,"se_std":0.077315811,"p_value_std":2.4e-14},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Tropical Monsoon","climate_group":"Tropical","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.043099065,"slope":0.027154753,"se":0.03651987,"p_value":0.461094298,"r2":0.012409591,"slope_std":0.111398343,"se_std":0.149817344,"p_value_std":0.461094298},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.043536135,"slope":0.041423842,"se":0.044982761,"p_value":0.362133417,"r2":0.018908854,"slope_std":0.137509469,"se_std":0.149323562,"p_value_std":0.362133417},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Tundra","climate_group":"Polar","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":31,"intercept":0.00753795,"slope":0.053970701,"se":0.018740505,"p_value":0.00740347,"r2":0.222390841,"slope_std":0.471583335,"se_std":0.163750142,"p_value_std":0.00740347},{"crop":"Grass/Pasture","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.005111259,"slope":0.122611011,"se":0.008455275,"p_value":2.27e-18,"r2":0.826964231,"slope_std":0.909375737,"se_std":0.062710694,"p_value_std":2.27e-18},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.006616093,"slope":0.122764915,"se":0.006409723,"p_value":5.71e-23,"r2":0.892900885,"slope_std":0.944934328,"se_std":0.049336303,"p_value_std":5.71e-23},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":44,"intercept":0.010625999,"slope":0.136220314,"se":0.004974418,"p_value":2.07e-28,"r2":0.946962528,"slope_std":0.973119997,"se_std":0.035535855,"p_value_std":2.07e-28},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":14,"intercept":0.001468517,"slope":0.071020708,"se":0.010178556,"p_value":1.48e-05,"r2":0.80225848,"slope_std":0.89568883,"se_std":0.128368454,"p_value_std":1.48e-05},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":13,"intercept":-0.002928347,"slope":0.152382218,"se":0.031530151,"p_value":0.000525,"r2":0.67983206,"slope_std":0.82451929,"se_std":0.170605323,"p_value_std":0.000525},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.023085425,"slope":0.135283305,"se":0.018592088,"p_value":4.51e-09,"r2":0.546138477,"slope_std":0.739011825,"se_std":0.101562959,"p_value_std":4.51e-09},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":9,"intercept":0.026616732,"slope":0.284228221,"se":0.057427233,"p_value":0.001657447,"r2":0.777750921,"slope_std":0.881901877,"se_std":0.178184927,"p_value_std":0.001657447},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.104061932,"slope":0.933785807,"se":0.089152018,"p_value":2.6e-14,"r2":0.682651204,"slope_std":0.82622709,"se_std":0.078882986,"p_value_std":2.6e-14},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.100318927,"slope":1.565412824,"se":0.084987307,"p_value":3.45e-24,"r2":0.869322332,"slope_std":0.932374566,"se_std":0.050619238,"p_value_std":3.45e-24},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.194806957,"slope":0.725499172,"se":0.141640343,"p_value":4.67e-06,"r2":0.339687334,"slope_std":0.582827019,"se_std":0.113786235,"p_value_std":4.67e-06},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.060834822,"slope":0.814256763,"se":0.087396774,"p_value":1.36e-12,"r2":0.629904965,"slope_std":0.793665524,"se_std":0.08518665,"p_value_std":1.36e-12},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.058256063,"slope":0.590567332,"se":0.056710973,"p_value":3.18e-14,"r2":0.680138035,"slope_std":0.824704817,"se_std":0.079194717,"p_value_std":3.18e-14},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":47,"intercept":-0.048249466,"slope":0.638301391,"se":0.076220031,"p_value":9.89e-11,"r2":0.609142708,"slope_std":0.78047595,"se_std":0.093197197,"p_value_std":9.89e-11},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Oceanic Climate","climate_group":"Oceanic","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.257402474,"slope":0.463846992,"se":0.118859996,"p_value":0.00028,"r2":0.22994731,"slope_std":0.479528216,"se_std":0.122878283,"p_value_std":0.00028},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Tropical Monsoon","climate_group":"Tropical","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.368664003,"slope":-0.522935592,"se":0.13631963,"p_value":0.000346,"r2":0.223929218,"slope_std":-0.4732116,"se_std":0.123357505,"p_value_std":0.000346},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Tropical Rainforest","climate_group":"Tropical","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.294444141,"slope":-0.055068739,"se":0.188341853,"p_value":0.771176854,"r2":0.001673474,"slope_std":-0.040908119,"se_std":0.139910793,"p_value_std":0.771176854},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.353227398,"slope":-0.609267136,"se":0.250858355,"p_value":0.018715972,"r2":0.103670646,"slope_std":-0.321979264,"se_std":0.132571058,"p_value_std":0.018715972},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":49,"intercept":-0.095179374,"slope":1.136857165,"se":0.08516474,"p_value":1.32e-17,"r2":0.791290714,"slope_std":0.889545229,"se_std":0.066638001,"p_value_std":1.32e-17},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.011241731,"slope":0.130421633,"se":0.011856308,"p_value":3.26e-14,"r2":0.733340075,"slope_std":0.856352775,"se_std":0.07784891,"p_value_std":3.26e-14},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":44,"intercept":-0.004373032,"slope":0.216281766,"se":0.013939915,"p_value":5.38e-19,"r2":0.851445284,"slope_std":0.922737928,"se_std":0.059472826,"p_value_std":5.38e-19},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":14,"intercept":-0.003562035,"slope":0.077698154,"se":0.024005726,"p_value":0.007130793,"r2":0.46609501,"slope_std":0.682711513,"se_std":0.210931464,"p_value_std":0.007130793},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":13,"intercept":0.00658497,"slope":0.14821047,"se":0.024374582,"p_value":7.95e-05,"r2":0.770703831,"slope_std":0.877897392,"se_std":0.144378344,"p_value_std":7.95e-05},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.068224893,"slope":-0.067564394,"se":0.057144741,"p_value":0.24342176,"r2":0.030792663,"slope_std":-0.175478383,"se_std":0.148416439,"p_value_std":0.24342176},{"crop":"Herbaceous Wetlands","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":9,"intercept":0.003045629,"slope":0.24044705,"se":0.093654672,"p_value":0.037149596,"r2":0.484969781,"slope_std":0.696397718,"se_std":0.271248494,"p_value_std":0.037149596},{"crop":"Hops","crop_group":"Other","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.007713989,"slope":0.132267077,"se":0.00440973,"p_value":6.28e-31,"r2":0.953373146,"slope_std":0.976408288,"se_std":0.032553053,"p_value_std":6.28e-31},{"crop":"Hops","crop_group":"Other","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.122091684,"slope":1.171986265,"se":0.052208783,"p_value":4.28e-28,"r2":0.908094151,"slope_std":0.952939742,"se_std":0.042450859,"p_value_std":4.28e-28},{"crop":"Hops","crop_group":"Other","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.009066118,"slope":0.157198376,"se":0.009125977,"p_value":3.55e-21,"r2":0.870859266,"slope_std":0.933198406,"se_std":0.054175794,"p_value_std":3.55e-21},{"crop":"Mixed Forest","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.014636425,"slope":0.10366877,"se":0.004944446,"p_value":1.57e-24,"r2":0.909016265,"slope_std":0.953423445,"se_std":0.045473203,"p_value_std":1.57e-24},{"crop":"Mixed Forest","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.014924723,"slope":0.098933381,"se":0.00519687,"p_value":7.25e-23,"r2":0.891735353,"slope_std":0.9443174,"se_std":0.049604034,"p_value_std":7.25e-23},{"crop":"Mixed Forest","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.006807043,"slope":0.139658016,"se":0.006822355,"p_value":4.08e-24,"r2":0.904977323,"slope_std":0.951302961,"se_std":0.046471564,"p_value_std":4.08e-24},{"crop":"Mixed Forest","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.115120936,"slope":1.186280416,"se":0.221750876,"p_value":2.1e-06,"r2":0.359443853,"slope_std":0.599536365,"se_std":0.112071069,"p_value_std":2.1e-06},{"crop":"Mixed Forest","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.158514144,"slope":1.481749736,"se":0.353561145,"p_value":0.00011,"r2":0.256168201,"slope_std":0.506130616,"se_std":0.120768114,"p_value_std":0.00011},{"crop":"Mixed Forest","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.136854581,"slope":1.495236264,"se":0.113609173,"p_value":5.02e-18,"r2":0.772542724,"slope_std":0.878944096,"se_std":0.066782832,"p_value_std":5.02e-18},{"crop":"Mixed Forest","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.003234724,"slope":0.141079113,"se":0.025055722,"p_value":1.17e-06,"r2":0.418787584,"slope_std":0.647137995,"se_std":0.114932037,"p_value_std":1.17e-06},{"crop":"Mixed Forest","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.002326143,"slope":0.151091675,"se":0.041393813,"p_value":0.000692,"r2":0.232423158,"slope_std":0.48210285,"se_std":0.13207925,"p_value_std":0.000692},{"crop":"Mixed Forest","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.016098222,"slope":0.220408374,"se":0.015045508,"p_value":1.56e-18,"r2":0.829857202,"slope_std":0.910964984,"se_std":0.062184257,"p_value_std":1.56e-18},{"crop":"Oats","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.009047029,"slope":0.102941509,"se":0.008362226,"p_value":7.57e-16,"r2":0.774986113,"slope_std":0.880332956,"se_std":0.071511901,"p_value_std":7.57e-16},{"crop":"Oats","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.247353702,"slope":0.327806717,"se":0.199353761,"p_value":0.10625564,"r2":0.050347881,"slope_std":0.224383335,"se_std":0.136457428,"p_value_std":0.10625564},{"crop":"Oats","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.016659376,"slope":0.087530421,"se":0.027561944,"p_value":0.002729865,"r2":0.186473583,"slope_std":0.431825871,"se_std":0.135975133,"p_value_std":0.002729865},{"crop":"Oranges","crop_group":"Perennial Crops","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.026364446,"slope":0.095702832,"se":0.007038769,"p_value":2.33e-17,"r2":0.807747444,"slope_std":0.898747708,"se_std":0.066101258,"p_value_std":2.33e-17},{"crop":"Oranges","crop_group":"Perennial Crops","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.026018736,"slope":0.10530287,"se":0.007112503,"p_value":1.06e-18,"r2":0.832825118,"slope_std":0.912592526,"se_std":0.06163951,"p_value_std":1.06e-18},{"crop":"Oranges","crop_group":"Perennial Crops","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.456960425,"slope":-0.111346154,"se":0.35946397,"p_value":0.7580086,"r2":0.001877817,"slope_std":-0.043333785,"se_std":0.139896473,"p_value_std":0.7580086},{"crop":"Oranges","crop_group":"Perennial Crops","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.63359002,"slope":-0.518531881,"se":0.359440767,"p_value":0.155244931,"r2":0.039206332,"slope_std":-0.19800589,"se_std":0.13725557,"p_value_std":0.155244931},{"crop":"Oranges","crop_group":"Perennial Crops","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.078779964,"slope":-0.034290207,"se":0.048677668,"p_value":0.484874477,"r2":0.011152122,"slope_std":-0.105603608,"se_std":0.149912693,"p_value_std":0.484874477},{"crop":"Oranges","crop_group":"Perennial Crops","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.093612545,"slope":-0.05665223,"se":0.048914755,"p_value":0.253037407,"r2":0.029584175,"slope_std":-0.172000508,"se_std":0.14850894,"p_value_std":0.253037407},{"crop":"Other Hay/Non Alfalfa","crop_group":"Other","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.010227202,"slope":0.082813815,"se":0.005006629,"p_value":1.67e-20,"r2":0.861460588,"slope_std":0.928149012,"se_std":0.056112592,"p_value_std":1.67e-20},{"crop":"Other Hay/Non Alfalfa","crop_group":"Other","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.005201568,"slope":0.109142663,"se":0.003662036,"p_value":8.2e-31,"r2":0.952803266,"slope_std":0.97611642,"se_std":0.032751382,"p_value_std":8.2e-31},{"crop":"Other Hay/Non Alfalfa","crop_group":"Other","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.080322217,"slope":1.080740837,"se":0.095340995,"p_value":1.51e-15,"r2":0.715868367,"slope_std":0.846090047,"se_std":0.074640528,"p_value_std":1.51e-15},{"crop":"Other Hay/Non Alfalfa","crop_group":"Other","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.081692392,"slope":1.437651151,"se":0.090368685,"p_value":2.05e-21,"r2":0.832285247,"slope_std":0.912296688,"se_std":0.057345659,"p_value_std":2.05e-21},{"crop":"Other Hay/Non Alfalfa","crop_group":"Other","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.003649941,"slope":0.090322909,"se":0.011208404,"p_value":3.32e-10,"r2":0.596105749,"slope_std":0.772078849,"se_std":0.095809263,"p_value_std":3.32e-10},{"crop":"Other Hay/Non Alfalfa","crop_group":"Other","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.005922539,"slope":0.162331591,"se":0.009408693,"p_value":3.33e-21,"r2":0.871223968,"slope_std":0.93339379,"se_std":0.054099242,"p_value_std":3.33e-21},{"crop":"Pecans","crop_group":"Perennial Crops","climate":"Hot Desert","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.007155892,"slope":0.123952439,"se":0.007484909,"p_value":1.6e-20,"r2":0.8617413,"slope_std":0.928300221,"se_std":0.056055715,"p_value_std":1.6e-20},{"crop":"Pecans","crop_group":"Perennial Crops","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.017696988,"slope":0.11596626,"se":0.005515736,"p_value":1.4e-24,"r2":0.909471482,"slope_std":0.953662143,"se_std":0.045359302,"p_value_std":1.4e-24},{"crop":"Pecans","crop_group":"Perennial Crops","climate":"Hot Desert","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.086948231,"slope":0.76305106,"se":0.070670084,"p_value":8.84e-15,"r2":0.69567356,"slope_std":0.834070477,"se_std":0.077247557,"p_value_std":8.84e-15},{"crop":"Pecans","crop_group":"Perennial Crops","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.020235296,"slope":1.030626726,"se":0.239695422,"p_value":7.72e-05,"r2":0.266057354,"slope_std":0.515807478,"se_std":0.119962629,"p_value_std":7.72e-05},{"crop":"Pecans","crop_group":"Perennial Crops","climate":"Hot Desert","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.00830483,"slope":0.109709082,"se":0.010017325,"p_value":3.76e-14,"r2":0.731617073,"slope_std":0.855346172,"se_std":0.078100013,"p_value_std":3.76e-14},{"crop":"Pecans","crop_group":"Perennial Crops","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.016515981,"slope":0.117187791,"se":0.031347006,"p_value":0.000531,"r2":0.241060934,"slope_std":0.490979566,"se_std":0.131333983,"p_value_std":0.000531},{"crop":"Pistachios","crop_group":"Perennial Crops","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.007843015,"slope":0.120938186,"se":0.016786671,"p_value":5.74e-09,"r2":0.541206104,"slope_std":0.735667115,"se_std":0.102113339,"p_value_std":5.74e-09},{"crop":"Pistachios","crop_group":"Perennial Crops","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.006582541,"slope":0.078335031,"se":0.01045044,"p_value":2.16e-09,"r2":0.560825258,"slope_std":0.748882673,"se_std":0.099906177,"p_value_std":2.16e-09},{"crop":"Pistachios","crop_group":"Perennial Crops","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.151582591,"slope":1.101450315,"se":0.089579358,"p_value":7.12e-17,"r2":0.74775804,"slope_std":0.864730039,"se_std":0.070327241,"p_value_std":7.12e-17},{"crop":"Pistachios","crop_group":"Perennial Crops","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.01102135,"slope":0.626418815,"se":0.160925065,"p_value":0.000289,"r2":0.229053229,"slope_std":0.478595057,"se_std":0.122949597,"p_value_std":0.000289},{"crop":"Pistachios","crop_group":"Perennial Crops","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.011288707,"slope":0.137067213,"se":0.022370544,"p_value":2.19e-07,"r2":0.460398873,"slope_std":0.678526988,"se_std":0.110741419,"p_value_std":2.19e-07},{"crop":"Pistachios","crop_group":"Perennial Crops","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.001958607,"slope":0.073203464,"se":0.015583971,"p_value":2.6e-05,"r2":0.333990839,"slope_std":0.577919405,"se_std":0.123030776,"p_value_std":2.6e-05},{"crop":"Rice","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.014176317,"slope":0.129522836,"se":0.004609514,"p_value":9.65e-30,"r2":0.947214035,"slope_std":0.973249215,"se_std":0.034636412,"p_value_std":9.65e-30},{"crop":"Rice","crop_group":"Cropland","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.012912151,"slope":0.097644647,"se":0.005216697,"p_value":1.41e-22,"r2":0.888424788,"slope_std":0.942562883,"se_std":0.05035673,"p_value_std":1.41e-22},{"crop":"Rice","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.137113943,"slope":1.570899724,"se":0.106941406,"p_value":5.84e-20,"r2":0.808829095,"slope_std":0.899349262,"se_std":0.061224579,"p_value_std":5.84e-20},{"crop":"Rice","crop_group":"Cropland","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.107312023,"slope":1.166353972,"se":0.040715936,"p_value":4.2e-33,"r2":0.941486971,"slope_std":0.970302515,"se_std":0.033872028,"p_value_std":4.2e-33},{"crop":"Rice","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.005145809,"slope":0.208641611,"se":0.015478185,"p_value":3.17e-17,"r2":0.805053427,"slope_std":0.897247696,"se_std":0.066562782,"p_value_std":3.17e-17},{"crop":"Rice","crop_group":"Cropland","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.002168089,"slope":0.115917521,"se":0.006489675,"p_value":8.74e-22,"r2":0.878802992,"slope_std":0.937444928,"se_std":0.052483116,"p_value_std":8.74e-22},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Cold Desert","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.000847,"slope":0.095465732,"se":0.008081588,"p_value":3.08e-15,"r2":0.76027144,"slope_std":0.871935456,"se_std":0.073813118,"p_value_std":3.08e-15},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.001445441,"slope":0.104566244,"se":0.009254612,"p_value":1.35e-14,"r2":0.743684508,"slope_std":0.862371444,"se_std":0.076323994,"p_value_std":1.35e-14},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Hot Desert","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.001702225,"slope":0.050023076,"se":0.019858036,"p_value":0.015475818,"r2":0.126039663,"slope_std":0.355020652,"se_std":0.140935215,"p_value_std":0.015475818},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.005695442,"slope":-0.004983531,"se":0.024590275,"p_value":0.840332938,"r2":0.000933,"slope_std":-0.030538298,"se_std":0.150685359,"p_value_std":0.840332938},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.002531281,"slope":0.086892512,"se":0.006089903,"p_value":4.1e-18,"r2":0.822282657,"slope_std":0.906798025,"se_std":0.063553367,"p_value_std":4.1e-18},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.00414288,"slope":0.085372716,"se":0.007298531,"p_value":4.28e-15,"r2":0.756671593,"slope_std":0.869868722,"se_std":0.074365254,"p_value_std":4.28e-15},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean (cold summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.004354097,"slope":0.028329616,"se":0.020965587,"p_value":0.183524675,"r2":0.039843427,"slope_std":0.199608185,"se_std":0.147721834,"p_value_std":0.183524675},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.003316291,"slope":0.106259663,"se":0.009183278,"p_value":6.15e-15,"r2":0.752653242,"slope_std":0.867555901,"se_std":0.074976778,"p_value_std":6.15e-15},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.00319173,"slope":0.078290253,"se":0.009176154,"p_value":7.04e-11,"r2":0.62326748,"slope_std":0.789472913,"se_std":0.092531631,"p_value_std":7.04e-11},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (cold summer)","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":42,"intercept":-0.000331,"slope":0.131085088,"se":0.010432116,"p_value":1.81e-15,"r2":0.797870164,"slope_std":0.893235783,"se_std":0.071086186,"p_value_std":1.81e-15},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (hot summer)","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":45,"intercept":0.00325752,"slope":0.124730408,"se":0.012566877,"p_value":1.08e-12,"r2":0.696139232,"slope_std":0.834349586,"se_std":0.084062652,"p_value_std":1.08e-12},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.002703501,"slope":0.104325698,"se":0.009477708,"p_value":3.19e-14,"r2":0.733599194,"slope_std":0.856504054,"se_std":0.077811077,"p_value_std":3.19e-14},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":44,"intercept":0.004062822,"slope":0.077233316,"se":0.003910164,"p_value":7.06e-23,"r2":0.90280906,"slope_std":0.950162649,"se_std":0.048104781,"p_value_std":7.06e-23},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Oceanic Climate","climate_group":"Oceanic","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.01629193,"slope":0.172050791,"se":0.022503505,"p_value":1.31e-09,"r2":0.57053828,"slope_std":0.755339844,"se_std":0.098795211,"p_value_std":1.31e-09},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Subarctic","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":36,"intercept":0.000129,"slope":0.071719571,"se":0.007874163,"p_value":1.21e-10,"r2":0.709301296,"slope_std":0.842200271,"se_std":0.092466004,"p_value_std":1.21e-10},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.002917465,"slope":0.090801927,"se":0.006064668,"p_value":7.01e-19,"r2":0.835924534,"slope_std":0.914289087,"se_std":0.061065439,"p_value_std":7.01e-19},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Tundra","climate_group":"Polar","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":45,"intercept":0.004062554,"slope":0.012127832,"se":0.013335443,"p_value":0.36818564,"r2":0.018871605,"slope_std":0.137373961,"se_std":0.15105277,"p_value_std":0.36818564},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":43,"intercept":0.00225362,"slope":0.087085222,"se":0.00827034,"p_value":3.16e-13,"r2":0.730045057,"slope_std":0.854426742,"se_std":0.081143496,"p_value_std":3.16e-13},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Cold Desert","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.029492869,"slope":0.512486516,"se":0.066814554,"p_value":4.78e-10,"r2":0.535659684,"slope_std":0.731887753,"se_std":0.095418615,"p_value_std":4.78e-10},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.026831491,"slope":0.391038674,"se":0.041013267,"p_value":6.39e-13,"r2":0.640606181,"slope_std":0.800378773,"se_std":0.08394604,"p_value_std":6.39e-13},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Hot Desert","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.027057021,"slope":-0.014155915,"se":0.121982547,"p_value":0.908069711,"r2":0.000264,"slope_std":-0.016247922,"se_std":0.140009524,"p_value_std":0.908069711},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.051720105,"slope":-0.033666209,"se":0.093644394,"p_value":0.720697056,"r2":0.002527874,"slope_std":-0.05027797,"se_std":0.13985091,"p_value_std":0.720697056},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.031513747,"slope":0.522706503,"se":0.060373026,"p_value":1.38e-11,"r2":0.59510975,"slope_std":0.771433568,"se_std":0.089101204,"p_value_std":1.38e-11},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.021887059,"slope":0.510080056,"se":0.114180661,"p_value":4.42e-05,"r2":0.281253133,"slope_std":0.53033304,"se_std":0.118714261,"p_value_std":4.42e-05},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean (cold summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.096063333,"slope":-0.106296617,"se":0.064993405,"p_value":0.108102385,"r2":0.049834421,"slope_std":-0.223236245,"se_std":0.136494314,"p_value_std":0.108102385},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.049196347,"slope":0.474069638,"se":0.07930304,"p_value":2.22e-07,"r2":0.412008116,"slope_std":0.641878583,"se_std":0.107374357,"p_value_std":2.22e-07},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.001078617,"slope":0.277917177,"se":0.049881789,"p_value":9.54e-07,"r2":0.378365577,"slope_std":0.61511428,"se_std":0.110403398,"p_value_std":9.54e-07},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (cold summer)","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.028557702,"slope":0.402931716,"se":0.059136915,"p_value":1.07e-08,"r2":0.476516762,"slope_std":0.690301935,"se_std":0.101313263,"p_value_std":1.07e-08},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (hot summer)","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.017262448,"slope":0.340280503,"se":0.046825551,"p_value":2.06e-09,"r2":0.508713344,"slope_std":0.713241435,"se_std":0.098148213,"p_value_std":2.06e-09},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.013144364,"slope":0.287329307,"se":0.05448726,"p_value":2.75e-06,"r2":0.352857659,"slope_std":0.594018232,"se_std":0.112645752,"p_value_std":2.75e-06},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":52,"intercept":-0.108591255,"slope":1.026831945,"se":0.077547227,"p_value":5.7e-18,"r2":0.778107188,"slope_std":0.882103842,"se_std":0.066617237,"p_value_std":5.7e-18},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Oceanic Climate","climate_group":"Oceanic","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.073104729,"slope":0.167821973,"se":0.071655586,"p_value":0.023119919,"r2":0.097109647,"slope_std":0.311624208,"se_std":0.133055373,"p_value_std":0.023119919},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Subarctic","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.027028344,"slope":0.404895965,"se":0.071295904,"p_value":6.5e-07,"r2":0.387402697,"slope_std":0.622416819,"se_std":0.109597955,"p_value_std":6.5e-07},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.054984995,"slope":0.558718287,"se":0.054397491,"p_value":5.14e-14,"r2":0.674109054,"slope_std":0.821041445,"se_std":0.079937592,"p_value_std":5.14e-14},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Tundra","climate_group":"Polar","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.080800196,"slope":-0.071956343,"se":0.098977075,"p_value":0.470549962,"r2":0.01025702,"slope_std":-0.101276946,"se_std":0.139308022,"p_value_std":0.470549962},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.001556798,"slope":0.270221409,"se":0.062371577,"p_value":6.93e-05,"r2":0.26902761,"slope_std":0.518678715,"se_std":0.119719639,"p_value_std":6.93e-05},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Cold Desert","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.001470185,"slope":0.043137818,"se":0.009357468,"p_value":3.46e-05,"r2":0.325691063,"slope_std":0.570693493,"se_std":0.123795004,"p_value_std":3.46e-05},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.001715566,"slope":0.044050064,"se":0.005716855,"p_value":1.07e-09,"r2":0.574351149,"slope_std":0.757859584,"se_std":0.098355668,"p_value_std":1.07e-09},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Hot Desert","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.002527682,"slope":0.043467531,"se":0.018218782,"p_value":0.021408459,"r2":0.114551761,"slope_std":0.338454961,"se_std":0.141858463,"p_value_std":0.021408459},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Hot Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.005745486,"slope":0.053472169,"se":0.013560418,"p_value":0.000285,"r2":0.261115793,"slope_std":0.510994906,"se_std":0.129587125,"p_value_std":0.000285},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.000297,"slope":0.046171914,"se":0.00666404,"p_value":1.46e-08,"r2":0.521761754,"slope_std":0.722330779,"se_std":0.104254741,"p_value_std":1.46e-08},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.005729506,"slope":0.029111344,"se":0.016162669,"p_value":0.078535425,"r2":0.068667385,"slope_std":0.262044624,"se_std":0.14548763,"p_value_std":0.078535425},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean (cold summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.00224442,"slope":0.047646366,"se":0.006890257,"p_value":1.52e-08,"r2":0.520789594,"slope_std":0.721657532,"se_std":0.104360652,"p_value_std":1.52e-08},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.004794979,"slope":0.063825348,"se":0.00900429,"p_value":8.49e-09,"r2":0.5331286,"slope_std":0.730156559,"se_std":0.103008318,"p_value_std":8.49e-09},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.002779249,"slope":0.037093541,"se":0.004189211,"p_value":2.48e-11,"r2":0.640531377,"slope_std":0.800332042,"se_std":0.090386622,"p_value_std":2.48e-11},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (cold summer)","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":42,"intercept":0.000575,"slope":0.074929729,"se":0.006270541,"p_value":8.94e-15,"r2":0.781169849,"slope_std":0.883838135,"se_std":0.073964544,"p_value_std":8.94e-15},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (hot summer)","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":45,"intercept":-0.000897,"slope":0.055081495,"se":0.007179593,"p_value":1.39e-09,"r2":0.577847224,"slope_std":0.76016263,"se_std":0.099083331,"p_value_std":1.39e-09},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Mediterranean Continental (warm summer)","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.000581,"slope":0.044805051,"se":0.005114181,"p_value":3.35e-11,"r2":0.635623273,"slope_std":0.797259853,"se_std":0.091001589,"p_value_std":3.35e-11},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":45,"intercept":-0.004181735,"slope":0.080529182,"se":0.007239546,"p_value":3.09e-14,"r2":0.742101916,"slope_std":0.861453374,"se_std":0.077444366,"p_value_std":3.09e-14},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Oceanic Climate","climate_group":"Oceanic","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.033862501,"slope":0.077596125,"se":0.018277392,"p_value":0.000111,"r2":0.290597404,"slope_std":0.539070871,"se_std":0.126975534,"p_value_std":0.000111},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Subarctic","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":36,"intercept":-0.001031351,"slope":0.049801828,"se":0.005977818,"p_value":1e-09,"r2":0.671203137,"slope_std":0.819269881,"se_std":0.09833868,"p_value_std":1e-09},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Temperate Oceanic","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.002032491,"slope":0.051074474,"se":0.005859463,"p_value":3.87e-11,"r2":0.633268422,"slope_std":0.795781642,"se_std":0.091295173,"p_value_std":3.87e-11},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Tundra","climate_group":"Polar","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":45,"intercept":0.001554213,"slope":0.053506823,"se":0.005445132,"p_value":1.46e-12,"r2":0.691890892,"slope_std":0.831799791,"se_std":0.084648261,"p_value_std":1.46e-12},{"crop":"Shrubland","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":43,"intercept":-0.00013,"slope":0.042429462,"se":0.00609,"p_value":1.83e-08,"r2":0.542104485,"slope_std":0.736277451,"se_std":0.105679626,"p_value_std":1.83e-08},{"crop":"Sod/Grass Seed","crop_group":"Other","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.008892543,"slope":0.1186337,"se":0.004516215,"p_value":1.59e-28,"r2":0.940056808,"slope_std":0.969565268,"se_std":0.036909962,"p_value_std":1.59e-28},{"crop":"Sod/Grass Seed","crop_group":"Other","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.109766683,"slope":1.375617154,"se":0.170824306,"p_value":1.2e-10,"r2":0.559767547,"slope_std":0.748176147,"se_std":0.092908605,"p_value_std":1.2e-10},{"crop":"Sod/Grass Seed","crop_group":"Other","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.006696121,"slope":0.17369697,"se":0.021456676,"p_value":2.95e-10,"r2":0.598294318,"slope_std":0.773494873,"se_std":0.095549331,"p_value_std":2.95e-10},{"crop":"Sorghum","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.011807569,"slope":0.134354234,"se":0.006799322,"p_value":1.66e-23,"r2":0.898723793,"slope_std":0.948010439,"se_std":0.047976369,"p_value_std":1.66e-23},{"crop":"Sorghum","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.082652765,"slope":1.595946017,"se":0.192388273,"p_value":5.03e-11,"r2":0.574341578,"slope_std":0.757853269,"se_std":0.091357778,"p_value_std":5.03e-11},{"crop":"Sorghum","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.000338,"slope":0.217814199,"se":0.032968692,"p_value":4.32e-08,"r2":0.497994618,"slope_std":0.705687337,"se_std":0.106813919,"p_value_std":4.32e-08},{"crop":"Soybeans","crop_group":"Cropland","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.010192603,"slope":0.140679787,"se":0.004335516,"p_value":2.28e-32,"r2":0.959886484,"slope_std":0.979737967,"se_std":0.030193887,"p_value_std":2.28e-32},{"crop":"Soybeans","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.018935462,"slope":0.130966857,"se":0.004569335,"p_value":4.21e-30,"r2":0.949163366,"slope_std":0.974250156,"se_std":0.033990852,"p_value_std":4.21e-30},{"crop":"Soybeans","crop_group":"Cropland","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":42,"intercept":0.012039161,"slope":0.14260531,"se":0.007323311,"p_value":5.15e-22,"r2":0.9045778,"slope_std":0.95109295,"se_std":0.048842144,"p_value_std":5.15e-22},{"crop":"Soybeans","crop_group":"Cropland","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.105038587,"slope":1.560383206,"se":0.102342578,"p_value":1.24e-20,"r2":0.820080977,"slope_std":0.905583225,"se_std":0.059395488,"p_value_std":1.24e-20},{"crop":"Soybeans","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.192096125,"slope":1.726768878,"se":0.108724045,"p_value":2.2e-21,"r2":0.831817435,"slope_std":0.912040259,"se_std":0.057425581,"p_value_std":2.2e-21},{"crop":"Soybeans","crop_group":"Cropland","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":51,"intercept":-0.105761474,"slope":1.362513434,"se":0.090909102,"p_value":6.24e-20,"r2":0.82092576,"slope_std":0.906049535,"se_std":0.060453092,"p_value_std":6.24e-20},{"crop":"Soybeans","crop_group":"Cropland","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.004096341,"slope":0.216511436,"se":0.017201307,"p_value":3.52e-16,"r2":0.782641439,"slope_std":0.884670243,"se_std":0.070284901,"p_value_std":3.52e-16},{"crop":"Soybeans","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.007307023,"slope":0.232630484,"se":0.016941719,"p_value":1.64e-17,"r2":0.810790474,"slope_std":0.900439045,"se_std":0.065576036,"p_value_std":1.64e-17},{"crop":"Soybeans","crop_group":"Cropland","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":43,"intercept":-0.007225675,"slope":0.210840573,"se":0.011928654,"p_value":8.72e-21,"r2":0.883987567,"slope_std":0.94020613,"se_std":0.053193717,"p_value_std":8.72e-21},{"crop":"Spring Wheat","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":45,"intercept":0.009114,"slope":0.133408673,"se":0.00536965,"p_value":3.91e-27,"r2":0.934875278,"slope_std":0.966889486,"se_std":0.038916943,"p_value_std":3.91e-27},{"crop":"Spring Wheat","crop_group":"Cropland","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":42,"intercept":0.009347139,"slope":0.155265334,"se":0.006138941,"p_value":3.21e-26,"r2":0.941148689,"slope_std":0.970128182,"se_std":0.038357304,"p_value_std":3.21e-26},{"crop":"Spring Wheat","crop_group":"Cropland","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.009060696,"slope":0.127900195,"se":0.004707379,"p_value":3.91e-29,"r2":0.943749623,"slope_std":0.971467767,"se_std":0.035754967,"p_value_std":3.91e-29},{"crop":"Spring Wheat","crop_group":"Cropland","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":45,"intercept":0.007274072,"slope":0.109422849,"se":0.004235105,"p_value":8.05e-28,"r2":0.939484001,"slope_std":0.969269829,"se_std":0.037514648,"p_value_std":8.05e-28},{"crop":"Spring Wheat","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.113044122,"slope":1.327525576,"se":0.080534804,"p_value":4.47e-22,"r2":0.841967343,"slope_std":0.917587785,"se_std":0.055665784,"p_value_std":4.47e-22},{"crop":"Spring Wheat","crop_group":"Cropland","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":48,"intercept":-0.105486906,"slope":1.137604376,"se":0.090168044,"p_value":1.53e-16,"r2":0.775802089,"slope_std":0.880796281,"se_std":0.069813091,"p_value_std":1.53e-16},{"crop":"Spring Wheat","crop_group":"Cropland","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.154511519,"slope":1.443117408,"se":0.078454742,"p_value":3.67e-24,"r2":0.869012131,"slope_std":0.932208201,"se_std":0.050679282,"p_value_std":3.67e-24},{"crop":"Spring Wheat","crop_group":"Cropland","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.138186577,"slope":1.390149323,"se":0.071573819,"p_value":3.22e-25,"r2":0.880907126,"slope_std":0.938566527,"se_std":0.048323435,"p_value_std":3.22e-25},{"crop":"Spring Wheat","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":45,"intercept":-0.006833537,"slope":0.182622355,"se":0.013258368,"p_value":2.28e-17,"r2":0.81523368,"slope_std":0.902902919,"se_std":0.065550676,"p_value_std":2.28e-17},{"crop":"Spring Wheat","crop_group":"Cropland","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.005606906,"slope":0.171755088,"se":0.013628296,"p_value":3.37e-16,"r2":0.783070975,"slope_std":0.884912976,"se_std":0.070215419,"p_value_std":3.37e-16},{"crop":"Spring Wheat","crop_group":"Cropland","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.010552888,"slope":0.188355123,"se":0.012318629,"p_value":3.22e-19,"r2":0.841608259,"slope_std":0.917392097,"se_std":0.059998436,"p_value_std":3.22e-19},{"crop":"Spring Wheat","crop_group":"Cropland","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":45,"intercept":-0.008559471,"slope":0.156013989,"se":0.010085597,"p_value":3.52e-19,"r2":0.847674185,"slope_std":0.920692231,"se_std":0.059518575,"p_value_std":3.52e-19},{"crop":"Sugarcane","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.014283503,"slope":0.143267973,"se":0.005578776,"p_value":4.05e-28,"r2":0.937456336,"slope_std":0.968223288,"se_std":0.037702081,"p_value_std":4.05e-28},{"crop":"Sugarcane","crop_group":"Cropland","climate":"Tropical Monsoon","climate_group":"Tropical","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.035335041,"slope":0.096998487,"se":0.006202529,"p_value":1.39e-19,"r2":0.847520777,"slope_std":0.920608917,"se_std":0.058867961,"p_value_std":1.39e-19},{"crop":"Sugarcane","crop_group":"Cropland","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.036434188,"slope":0.095973523,"se":0.005756087,"p_value":1.23e-20,"r2":0.863354949,"slope_std":0.929168956,"se_std":0.055727635,"p_value_std":1.23e-20},{"crop":"Sugarcane","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.042650846,"slope":1.336553332,"se":0.208987154,"p_value":4.9e-08,"r2":0.445054706,"slope_std":0.667124206,"se_std":0.104313375,"p_value_std":4.9e-08},{"crop":"Sugarcane","crop_group":"Cropland","climate":"Tropical Monsoon","climate_group":"Tropical","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.00654258,"slope":1.431257481,"se":0.367156354,"p_value":0.000284,"r2":0.229562391,"slope_std":0.479126697,"se_std":0.12290899,"p_value_std":0.000284},{"crop":"Sugarcane","crop_group":"Cropland","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.056326679,"slope":1.222120401,"se":0.382861875,"p_value":0.002419848,"r2":0.166520751,"slope_std":0.408069542,"se_std":0.127838689,"p_value_std":0.002419848},{"crop":"Sugarcane","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.00554245,"slope":0.206175847,"se":0.038925035,"p_value":3.6e-06,"r2":0.389359334,"slope_std":0.623986646,"se_std":0.117805759,"p_value_std":3.6e-06},{"crop":"Sugarcane","crop_group":"Cropland","climate":"Tropical Monsoon","climate_group":"Tropical","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.027944879,"slope":0.153493764,"se":0.045260226,"p_value":0.001479185,"r2":0.207226195,"slope_std":0.45522104,"se_std":0.134229604,"p_value_std":0.001479185},{"crop":"Sugarcane","crop_group":"Cropland","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.030370515,"slope":0.145192193,"se":0.050098915,"p_value":0.005833053,"r2":0.160290033,"slope_std":0.400362377,"se_std":0.138146,"p_value_std":0.005833053},{"crop":"Walnuts","crop_group":"Perennial Crops","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.018004254,"slope":0.131240696,"se":0.010479666,"p_value":4.19e-16,"r2":0.780914344,"slope_std":0.88369358,"se_std":0.070563584,"p_value_std":4.19e-16},{"crop":"Walnuts","crop_group":"Perennial Crops","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.192348414,"slope":1.07087259,"se":0.08745178,"p_value":8.34e-17,"r2":0.746201962,"slope_std":0.863829822,"se_std":0.070543831,"p_value_std":8.34e-17},{"crop":"Walnuts","crop_group":"Perennial Crops","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.007316051,"slope":0.142935443,"se":0.01589559,"p_value":1.59e-11,"r2":0.64760154,"slope_std":0.804736938,"se_std":0.089493329,"p_value_std":1.59e-11},{"crop":"Winter Wheat","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.002374357,"slope":0.163107239,"se":0.008797543,"p_value":2.05e-22,"r2":0.886520419,"slope_std":0.941552133,"se_std":0.050784657,"p_value_std":2.05e-22},{"crop":"Winter Wheat","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.008365278,"slope":0.140169571,"se":0.011129955,"p_value":3.45e-16,"r2":0.782830141,"slope_std":0.884776888,"se_std":0.070254385,"p_value_std":3.45e-16},{"crop":"Winter Wheat","crop_group":"Cropland","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.009342835,"slope":0.127570526,"se":0.003806946,"p_value":5.85e-33,"r2":0.96229377,"slope_std":0.980965733,"se_std":0.029273875,"p_value_std":5.85e-33},{"crop":"Winter Wheat","crop_group":"Cropland","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.009080901,"slope":0.124110534,"se":0.00371618,"p_value":6.74e-33,"r2":0.962048765,"slope_std":0.980840846,"se_std":0.029368828,"p_value_std":6.74e-33},{"crop":"Winter Wheat","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.208498111,"slope":1.425600606,"se":0.122553175,"p_value":5.81e-16,"r2":0.726270332,"slope_std":0.852214957,"se_std":0.073261507,"p_value_std":5.81e-16},{"crop":"Winter Wheat","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.156629833,"slope":1.239964398,"se":0.287957847,"p_value":7.56e-05,"r2":0.266632047,"slope_std":0.516364258,"se_std":0.119915653,"p_value_std":7.56e-05},{"crop":"Winter Wheat","crop_group":"Cropland","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.119281541,"slope":1.36478315,"se":0.08843108,"p_value":7.4e-21,"r2":0.823643322,"slope_std":0.907547972,"se_std":0.058804541,"p_value_std":7.4e-21},{"crop":"Winter Wheat","crop_group":"Cropland","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.121260329,"slope":1.489709286,"se":0.098324403,"p_value":1.61e-20,"r2":0.818215288,"slope_std":0.904552535,"se_std":0.059702647,"p_value_std":1.61e-20},{"crop":"Winter Wheat","crop_group":"Cropland","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.034596981,"slope":0.249307283,"se":0.021868834,"p_value":1.01e-14,"r2":0.747072203,"slope_std":0.864333386,"se_std":0.075817933,"p_value_std":1.01e-14},{"crop":"Winter Wheat","crop_group":"Cropland","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.012123083,"slope":0.172010244,"se":0.058214936,"p_value":0.005010662,"r2":0.165568522,"slope_std":0.40690112,"se_std":0.137711117,"p_value_std":0.005010662},{"crop":"Winter Wheat","crop_group":"Cropland","climate":"Mediterranean (hot summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.008470397,"slope":0.187095091,"se":0.011817296,"p_value":8.75e-20,"r2":0.850676394,"slope_std":0.922321199,"se_std":0.058255629,"p_value_std":8.75e-20},{"crop":"Winter Wheat","crop_group":"Cropland","climate":"Mediterranean (warm summer)","climate_group":"Temperate","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.006751825,"slope":0.189421088,"se":0.013219041,"p_value":3.51e-18,"r2":0.823528499,"slope_std":0.90748471,"se_std":0.063330213,"p_value_std":3.51e-18},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":16,"intercept":0.005766002,"slope":0.048226656,"se":0.006036942,"p_value":1.39e-06,"r2":0.820092055,"slope_std":0.905589341,"se_std":0.113360344,"p_value_std":1.39e-06},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.009729114,"slope":0.152471342,"se":0.004206238,"p_value":2.07e-34,"r2":0.967598941,"slope_std":0.983666072,"se_std":0.027136464,"p_value_std":2.07e-34},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":40,"intercept":0.011198535,"slope":0.156061131,"se":0.009359136,"p_value":4.53e-19,"r2":0.879764659,"slope_std":0.937957707,"se_std":0.056250226,"p_value_std":4.53e-19},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Tropical Monsoon","climate_group":"Tropical","relationship":"GPP ~ SIF","x_label":"SIF","y_label":"GPP","n":46,"intercept":0.053062549,"slope":0.08489162,"se":0.012962974,"p_value":5.26e-08,"r2":0.493592056,"slope_std":0.702561069,"se_std":0.107281273,"p_value_std":5.26e-08},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.136275921,"slope":1.221142672,"se":0.066556763,"p_value":4.11e-24,"r2":0.868430081,"slope_std":0.931895961,"se_std":0.050791755,"p_value_std":4.11e-24},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":-0.11804978,"slope":1.516496965,"se":0.10575228,"p_value":1.58e-19,"r2":0.801276595,"slope_std":0.895140545,"se_std":0.062422251,"p_value_std":1.58e-19},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Humid Subtropical","climate_group":"Temperate","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.048223003,"slope":0.838218866,"se":0.28768761,"p_value":0.005291834,"r2":0.142703161,"slope_std":0.377760719,"se_std":0.129652389,"p_value_std":0.005291834},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":47,"intercept":-0.186992668,"slope":1.114370942,"se":0.097741374,"p_value":7.31e-15,"r2":0.742839251,"slope_std":0.861881228,"se_std":0.075595524,"p_value_std":7.31e-15},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Tropical Monsoon","climate_group":"Tropical","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.175090574,"slope":0.936159689,"se":0.323363427,"p_value":0.005567508,"r2":0.141145628,"slope_std":0.375693529,"se_std":0.129770111,"p_value_std":0.005567508},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Tropical Savanna (dry winter)","climate_group":"Tropical","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.198608392,"slope":0.765886322,"se":0.153177464,"p_value":7.15e-06,"r2":0.328946793,"slope_std":0.573538833,"se_std":0.114707916,"p_value_std":7.15e-06},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Warm Summer Continental","climate_group":"Continental","relationship":"SIF ~ NDVI","x_label":"NDVI","y_label":"SIF","n":53,"intercept":0.02960072,"slope":1.291266782,"se":0.462098865,"p_value":0.007309142,"r2":0.132776977,"slope_std":0.364385753,"se_std":0.130400817,"p_value_std":0.007309142},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Cold Semi-Arid","climate_group":"Arid","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":16,"intercept":0.001644196,"slope":0.044216563,"se":0.014480143,"p_value":0.008588226,"r2":0.399772056,"slope_std":0.632275301,"se_std":0.207058988,"p_value_std":0.008588226},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Hot Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":-0.010746644,"slope":0.235840834,"se":0.016846015,"p_value":8.15e-18,"r2":0.816662384,"slope_std":0.903693745,"se_std":0.064550476,"p_value_std":8.15e-18},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Monsoon-Influenced Warm Summer Continental","climate_group":"Continental","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":44,"intercept":-0.027605291,"slope":0.207523616,"se":0.014382444,"p_value":7.08e-18,"r2":0.832130742,"slope_std":0.912212005,"se_std":0.063220939,"p_value_std":7.08e-18},{"crop":"Woody Wetlands","crop_group":"Natural Vegetation","climate":"Tropical Monsoon","climate_group":"Tropical","relationship":"GPP ~ NDVI","x_label":"NDVI","y_label":"GPP","n":46,"intercept":0.058721032,"slope":0.139823646,"se":0.044840095,"p_value":0.003203852,"r2":0.180993466,"slope_std":0.425433269,"se_std":0.136432345,"p_value_std":0.003203852}];
+const relationshipChoices = ["GPP ~ SIF","SIF ~ NDVI","GPP ~ NDVI"];
+const cropChoices = ["Alfalfa","Almonds","Apples","Barley","Blueberries","Citrus","Clover/Wildflowers","Corn","Cotton","Deciduous Forest","Durum Wheat","Evergreen Forest","Fallow/Idle Cropland","Grapes","Grass/Pasture","Herbaceous Wetlands","Hops","Mixed Forest","Oats","Oranges","Other Hay/Non Alfalfa","Pecans","Pistachios","Rice","Shrubland","Sod/Grass Seed","Sorghum","Soybeans","Spring Wheat","Sugarcane","Walnuts","Winter Wheat","Woody Wetlands"];
+const cropGroupChoices = ["Cropland","Natural Vegetation","Perennial Crops","Other"];
+const climateChoices = ["Cold Desert","Cold Semi-Arid","Hot Desert","Hot Semi-Arid","Hot Summer Continental","Humid Subtropical","Mediterranean (cold summer)","Mediterranean (hot summer)","Mediterranean (warm summer)","Mediterranean Continental (cold summer)","Mediterranean Continental (hot summer)","Mediterranean Continental (warm summer)","Monsoon-Influenced Hot Summer Continental","Monsoon-Influenced Humid Subtropical","Monsoon-Influenced Warm Summer Continental","Oceanic Climate","Subarctic","Subpolar Oceanic","Temperate Oceanic","Tropical Monsoon","Tropical Rainforest","Tropical Savanna (dry winter)","Tundra","Warm Summer Continental"];
+const climateGroupChoices = ["Arid","Continental","Temperate","Polar","Oceanic","Tropical"];
+
+const climatePalette = {
+  'Arid': '#FFD400',
+  'Continental': '#7E96D1',
+  'Oceanic': '#00A88F',
+  'Polar': '#FF7A59',
+  'Temperate': '#EE6FB5',
+  'Tropical': '#7FBF00'
+};
+
+const MAX_INDIVIDUAL_FACETS = 5;
+
+const relationshipSelect = document.getElementById('relationshipSelect');
+const cropSelect = document.getElementById('cropSelect');
+const cropGroupSelect = document.getElementById('cropGroupSelect');
+const climateSelect = document.getElementById('climateSelect');
+const climateGroupSelect = document.getElementById('climateGroupSelect');
+const summaryTypeInputs = document.querySelectorAll('input[name="summary_type"]');
+const downloadBtn = document.getElementById('downloadBtn');
+const rowCountText = document.getElementById('rowCountText');
+const metricCountText = document.getElementById('metricCountText');
+
+function toNum(x){
+  if (x === null || x === undefined || x === '') return null;
+  const v = Number(x);
+  return Number.isFinite(v) ? v : null;
+}
+
+function uniqueSorted(arr){
+  return Array.from(new Set(arr.filter(x => x !== null && x !== undefined && x !== '')))
+    .sort((a,b) => String(a).localeCompare(String(b)));
+}
+
+function makeColorMap(values){
+  const base = [
+    '#FFD400', '#7E96D1', '#00A88F', '#FF7A59', '#EE6FB5',
+    '#7FBF00', '#9B8CFF', '#00C2FF', '#FFA600', '#8DD3C7',
+    '#FB8072', '#80B1D3', '#FDB462', '#B3DE69', '#BC80BD'
+  ];
+
+  const map = {};
+  values.forEach((v, i) => {
+    map[v] = base[i % base.length];
+  });
+  return map;
+}
+
+function escapeHtml(str){
+  return String(str)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function getRadioValue(name){
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+
+function createMultiSelect(container, values, selectedValues = [], placeholder = 'Select options'){
+  container._values = values.slice();
+  container._selected = new Set(selectedValues);
+
+  container.innerHTML = `
+    <div class="multi-select-trigger"></div>
+    <div class="multi-select-dropdown">
+      <input type="text" class="multi-select-search" placeholder="Search...">
+      <div class="multi-select-actions">
+        <button type="button" class="ms-select-all">Select all</button>
+        <button type="button" class="ms-clear-all">Clear all</button>
+      </div>
+      <div class="multi-select-options"></div>
+    </div>
+  `;
+
+  const trigger = container.querySelector('.multi-select-trigger');
+  const search = container.querySelector('.multi-select-search');
+  const optionsWrap = container.querySelector('.multi-select-options');
+  const selectAllBtn = container.querySelector('.ms-select-all');
+  const clearAllBtn = container.querySelector('.ms-clear-all');
+
+  function renderTrigger(){
+    const selected = Array.from(container._selected);
+    if (selected.length === 0){
+      trigger.innerHTML = `<span class="multi-select-placeholder">${placeholder}</span>`;
+      return;
+    }
+
+    trigger.innerHTML = selected.map(v => `
+      <span class="multi-select-chip" data-value="${escapeHtml(v)}">
+        ${escapeHtml(v)}
+        <button type="button" data-remove="${escapeHtml(v)}">×</button>
+      </span>
+    `).join('');
+  }
+
+  function renderOptions(){
+    optionsWrap.innerHTML = container._values.map(v => `
+      <label class="multi-select-option" data-value="${escapeHtml(v)}">
+        <input type="checkbox" value="${escapeHtml(v)}" ${container._selected.has(v) ? 'checked' : ''}>
+        <span>${escapeHtml(v)}</span>
+      </label>
+    `).join('');
+  }
+
+  function filterOptions(){
+    const q = search.value.trim().toLowerCase();
+    optionsWrap.querySelectorAll('.multi-select-option').forEach(el => {
+      const txt = el.dataset.value.toLowerCase();
+      el.classList.toggle('hidden', q && !txt.includes(q));
+    });
+  }
+
+  trigger.addEventListener('click', (e) => {
+    const removeValue = e.target.getAttribute('data-remove');
+    if (removeValue){
+      container._selected.delete(removeValue);
+      renderTrigger();
+      renderOptions();
+      filterOptions();
+      container.dispatchEvent(new Event('change'));
+      return;
+    }
+    container.classList.toggle('open');
+    if (container.classList.contains('open')) search.focus();
+  });
+
+  optionsWrap.addEventListener('change', (e) => {
+    if (e.target.matches('input[type="checkbox"]')){
+      const value = e.target.value;
+      if (e.target.checked) container._selected.add(value);
+      else container._selected.delete(value);
+      renderTrigger();
+      container.dispatchEvent(new Event('change'));
+    }
+  });
+
+  search.addEventListener('input', filterOptions);
+
+  selectAllBtn.addEventListener('click', () => {
+    container._values.forEach(v => container._selected.add(v));
+    renderTrigger();
+    renderOptions();
+    filterOptions();
+    container.dispatchEvent(new Event('change'));
+  });
+
+  clearAllBtn.addEventListener('click', () => {
+    container._selected.clear();
+    renderTrigger();
+    renderOptions();
+    filterOptions();
+    container.dispatchEvent(new Event('change'));
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!container.contains(e.target)) container.classList.remove('open');
+  });
+
+  renderTrigger();
+  renderOptions();
+  filterOptions();
+}
+
+function getSelectedValues(el){
+  if (el.classList.contains('multi-select')){
+    return Array.from(el._selected || []);
+  }
+  return Array.from(el.selectedOptions || []).map(o => o.value);
+}
+
+function selectedRows(){
+  const selectedRelationships = getSelectedValues(relationshipSelect);
+  const selectedCrop = getSelectedValues(cropSelect);
+  const selectedCropGroup = getSelectedValues(cropGroupSelect);
+  const selectedClimate = getSelectedValues(climateSelect);
+  const selectedClimateGroup = getSelectedValues(climateGroupSelect);
+  const summaryType = getRadioValue('summary_type');
+
+  return relData.filter(d => {
+    if (selectedRelationships.length > 0 && !selectedRelationships.includes(d.relationship)) return false;
+
+    if (summaryType === 'individual'){
+      if (selectedCrop.length > 0 && !selectedCrop.includes(d.crop)) return false;
+      if (selectedClimate.length > 0 && !selectedClimate.includes(d.climate)) return false;
+    } else {
+      if (selectedCropGroup.length > 0 && !selectedCropGroup.includes(d.crop_group)) return false;
+      if (selectedClimateGroup.length > 0 && !selectedClimateGroup.includes(d.climate_group)) return false;
+    }
+    return true;
+  });
+}
+
+function updateControlVisibility(){
+  const summaryType = getRadioValue('summary_type');
+  document.getElementById('individualControls').style.display = summaryType === 'individual' ? 'block' : 'none';
+  document.getElementById('groupControls').style.display = summaryType === 'group' ? 'block' : 'none';
+}
+
+function updateCounts(){
+  const rows = selectedRows();
+  const summaryType = getRadioValue('summary_type');
+  const nRelationships = getSelectedValues(relationshipSelect).length;
+  const nCrops = getSelectedValues(cropSelect).length;
+
+  rowCountText.textContent = `${rows.length} relationship summaries`;
+
+  if (summaryType === 'individual' && nCrops > MAX_INDIVIDUAL_FACETS){
+    metricCountText.textContent = `Please select at most ${MAX_INDIVIDUAL_FACETS} vegetation types`;
+  } else {
+    metricCountText.textContent = `${nRelationships} relationship(s) selected`;
+  }
+}
+
+function buildFacetData(){
+  const rows = selectedRows();
+  const summaryType = getRadioValue('summary_type');
+
+  const facetField = summaryType === 'group' ? 'crop_group' : 'crop';
+  const climateField = summaryType === 'group' ? 'climate_group' : 'climate';
+
+  return rows.map(d => ({
+    facet: d[facetField],
+    climate: d[climateField],
+    relationship: d.relationship,
+    r2: toNum(d.r2),
+    beta: toNum(d.slope_std),
+    beta_se: toNum(d.se_std),
+    n: toNum(d.n)
+  }));
+}
+
+function makeHorizontalDomains(n){
+  const gap = 0.04;
+  const width = (1 - gap * (n - 1)) / n;
+  const domains = [];
+  for (let i = 0; i < n; i++){
+    const start = i * (width + gap);
+    domains.push([start, start + width]);
+  }
+  return domains;
+}
+
+function renderR2Plot(){
+  const plotDiv = document.getElementById('r2Plot');
+
+  if (typeof Plotly === 'undefined'){
+    plotDiv.innerHTML = '<div class="empty-state">Plotly did not load.</div>';
+    return;
+  }
+
+  const rows = buildFacetData();
+
+  if (rows.length === 0){
+    plotDiv.innerHTML = '<div class="empty-state">No rows for the current selection.</div>';
+    return;
+  }
+
+  plotDiv.innerHTML = '';
+
+  const summaryType = getRadioValue('summary_type');
+  const preferredFacetOrder = ['Cropland', 'Natural Vegetation', 'Perennial Crops', 'Other'];
+
+  const facets = summaryType === 'group'
+    ? preferredFacetOrder.filter(f => rows.some(d => d.facet === f))
+    : uniqueSorted(rows.map(d => d.facet));
+
+  if (summaryType === 'individual' && facets.length > MAX_INDIVIDUAL_FACETS){
+    plotDiv.innerHTML = `<div class="empty-state">Please select at most ${MAX_INDIVIDUAL_FACETS} vegetation types in individual mode.</div>`;
+    return;
+  }
+
+  if (facets.length === 0){
+    plotDiv.innerHTML = '<div class="empty-state">No panels available for the current selection.</div>';
+    return;
+  }
+
+  const relationships = getSelectedValues(relationshipSelect);
+  const relationshipDisplay = relationships.map(r => r.replace(' ~ ', '<br>'));
+  const climates = uniqueSorted(rows.map(d => d.climate));
+  const dynamicClimateColors = makeColorMap(climates);
+  const domains = makeHorizontalDomains(facets.length);
+
+  const traces = [];
+  const annotations = [];
+  const legendSeen = new Set();
+
+  facets.forEach((facet, i) => {
+    const axisSuffix = i === 0 ? '' : String(i + 1);
+    const xaxis = 'x' + axisSuffix;
+    const yaxis = 'y' + axisSuffix;
+
+    climates.forEach(clim => {
+      const sub = rows.filter(d => d.facet === facet && d.climate === clim);
+
+      const yVals = relationships.map(rel => {
+        const row = sub.find(r => r.relationship === rel);
+        return row ? row.r2 : null;
+      });
+
+      const hover = relationships.map(rel => {
+        const row = sub.find(r => r.relationship === rel);
+        if (!row) return `<b>${facet}</b><br>${clim}<br>${rel}<br>No data`;
+        return `
+          <b>${facet}</b><br>
+          <b>Climate:</b> ${clim}<br>
+          <b>Relationship:</b> ${rel}<br>
+          <b>R²:</b> ${row.r2 ?? 'NA'}<br>
+          <b>n:</b> ${row.n ?? 'NA'}
+        `;
+      });
+
+      const showLegend = !legendSeen.has(clim);
+      if (showLegend) legendSeen.add(clim);
+
+      traces.push({
+        type: 'bar',
+        x: relationshipDisplay,
+        y: yVals,
+        name: clim,
+        marker: {color: climatePalette[clim] || dynamicClimateColors[clim] || '#9dffb3'},
+        customdata: hover,
+        hovertemplate: '%{customdata}<extra></extra>',
+        xaxis,
+        yaxis,
+        showlegend: showLegend,
+        offsetgroup: clim,
+        legendgroup: clim
+      });
+    });
+
+    annotations.push({
+      text: `<b>${facet}</b>`,
+      xref: 'paper',
+      yref: 'paper',
+      x: (domains[i][0] + domains[i][1]) / 2,
+      y: 1.08,
+      showarrow: false,
+      font: {size: 16, color: '#f6f7f7'}
+    });
+  });
+
+  const layout = {
+    barmode: 'group',
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(255,255,255,0.015)',
+    font: {color: '#f6f7f7'},
+    margin: {l: 70, r: 30, t: 70, b: 110},
+    legend: {orientation: 'h', y: -0.18},
+    annotations,
+    height: 520
+  };
+
+  facets.forEach((facet, i) => {
+    const axisSuffix = i === 0 ? '' : String(i + 1);
+    const xaxisKey = 'xaxis' + axisSuffix;
+    const yaxisKey = 'yaxis' + axisSuffix;
+
+    layout[xaxisKey] = {
+      domain: domains[i],
+      title: i === Math.floor(facets.length / 2) ? 'Relationship' : '',
+      tickangle: 0,
+      tickfont: {size: 12},
+      automargin: true
+    };
+
+    layout[yaxisKey] = {
+      domain: [0, 1],
+      title: i === 0 ? 'Coefficient of determination (R²)' : '',
+      range: [0, 1],
+      gridcolor: 'rgba(255,255,255,0.06)'
+    };
+  });
+
+  Plotly.newPlot(plotDiv, traces, layout, {
+    responsive: true,
+    displayModeBar: true
+  });
+}
+
+function renderSlopePlot(){
+  const plotDiv = document.getElementById('slopePlot');
+
+  if (typeof Plotly === 'undefined'){
+    plotDiv.innerHTML = '<div class="empty-state">Plotly did not load.</div>';
+    return;
+  }
+
+  const rows = buildFacetData();
+
+  if (rows.length === 0){
+    plotDiv.innerHTML = '<div class="empty-state">No rows for the current selection.</div>';
+    return;
+  }
+
+  plotDiv.innerHTML = '';
+
+  const summaryType = getRadioValue('summary_type');
+  const preferredFacetOrder = ['Cropland', 'Natural Vegetation', 'Perennial Crops', 'Other'];
+
+  const facets = summaryType === 'group'
+    ? preferredFacetOrder.filter(f => rows.some(d => d.facet === f))
+    : uniqueSorted(rows.map(d => d.facet));
+
+  if (summaryType === 'individual' && facets.length > MAX_INDIVIDUAL_FACETS){
+    plotDiv.innerHTML = `<div class="empty-state">Please select at most ${MAX_INDIVIDUAL_FACETS} vegetation types in individual mode.</div>`;
+    return;
+  }
+
+  if (facets.length === 0){
+    plotDiv.innerHTML = '<div class="empty-state">No panels available for the current selection.</div>';
+    return;
+  }
+
+  const relationships = getSelectedValues(relationshipSelect);
+  const relationshipDisplay = relationships.map(r => r.replace(' ~ ', '<br>'));
+  const climates = uniqueSorted(rows.map(d => d.climate));
+  const dynamicClimateColors = makeColorMap(climates);
+  const domains = makeHorizontalDomains(facets.length);
+
+  const traces = [];
+  const annotations = [];
+  const legendSeen = new Set();
+
+  facets.forEach((facet, i) => {
+    const axisSuffix = i === 0 ? '' : String(i + 1);
+    const xaxis = 'x' + axisSuffix;
+    const yaxis = 'y' + axisSuffix;
+
+    climates.forEach(clim => {
+      const sub = rows.filter(d => d.facet === facet && d.climate === clim);
+
+      const yVals = relationships.map(rel => {
+        const row = sub.find(r => r.relationship === rel);
+        return row ? row.beta : null;
+      });
+
+      const errVals = relationships.map(rel => {
+        const row = sub.find(r => r.relationship === rel);
+        return row ? row.beta_se : null;
+      });
+
+      const hover = relationships.map(rel => {
+        const row = sub.find(r => r.relationship === rel);
+        if (!row) return `<b>${facet}</b><br>${clim}<br>${rel}<br>No data`;
+        return `
+          <b>${facet}</b><br>
+          <b>Climate:</b> ${clim}<br>
+          <b>Relationship:</b> ${rel}<br>
+          <b>Standardized slope (β):</b> ${row.beta ?? 'NA'}<br>
+          <b>SE:</b> ${row.beta_se ?? 'NA'}<br>
+          <b>n:</b> ${row.n ?? 'NA'}
+        `;
+      });
+
+      const showLegend = !legendSeen.has(clim);
+      if (showLegend) legendSeen.add(clim);
+
+      traces.push({
+        type: 'bar',
+        x: relationshipDisplay,
+        y: yVals,
+        name: clim,
+        marker: {color: climatePalette[clim] || dynamicClimateColors[clim] || '#9dffb3'},
+        customdata: hover,
+        hovertemplate: '%{customdata}<extra></extra>',
+        xaxis,
+        yaxis,
+        showlegend: showLegend,
+        offsetgroup: clim,
+        legendgroup: clim,
+        error_y: {
+          type: 'data',
+          array: errVals,
+          visible: true,
+          color: '#dce6e0',
+          thickness: 1.2,
+          width: 4
+        }
+      });
+    });
+
+    annotations.push({
+      text: `<b>${facet}</b>`,
+      xref: 'paper',
+      yref: 'paper',
+      x: (domains[i][0] + domains[i][1]) / 2,
+      y: 1.08,
+      showarrow: false,
+      font: {size: 16, color: '#f6f7f7'}
+    });
+  });
+
+  const validLower = rows
+    .map(d => (d.beta !== null && d.beta_se !== null) ? d.beta - d.beta_se : d.beta)
+    .filter(v => v !== null);
+  const validUpper = rows
+    .map(d => (d.beta !== null && d.beta_se !== null) ? d.beta + d.beta_se : d.beta)
+    .filter(v => v !== null);
+
+  const yMin = validLower.length ? Math.min(...validLower) : -1;
+  const yMax = validUpper.length ? Math.max(...validUpper) : 1;
+  const pad = Math.max(0.08, (yMax - yMin) * 0.12);
+
+  const layout = {
+    barmode: 'group',
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(255,255,255,0.015)',
+    font: {color: '#f6f7f7'},
+    margin: {l: 70, r: 30, t: 70, b: 110},
+    legend: {orientation: 'h', y: -0.18},
+    annotations,
+    height: 520,
+    shapes: [{
+      type: 'line',
+      xref: 'paper',
+      yref: 'y',
+      x0: 0,
+      x1: 1,
+      y0: 0,
+      y1: 0,
+      line: {color: 'rgba(255,255,255,0.5)', width: 1.2, dash: 'dash'}
+    }]
+  };
+
+  facets.forEach((facet, i) => {
+    const axisSuffix = i === 0 ? '' : String(i + 1);
+    const xaxisKey = 'xaxis' + axisSuffix;
+    const yaxisKey = 'yaxis' + axisSuffix;
+
+    layout[xaxisKey] = {
+      domain: domains[i],
+      title: i === Math.floor(facets.length / 2) ? 'Relationship' : '',
+      tickangle: 0,
+      tickfont: {size: 12},
+      automargin: true
+    };
+
+    layout[yaxisKey] = {
+      domain: [0, 1],
+      title: i === 0 ? 'Standardized slope (β) ± SE' : '',
+      range: [yMin - pad, yMax + pad],
+      gridcolor: 'rgba(255,255,255,0.06)'
+    };
+  });
+
+  Plotly.newPlot(plotDiv, traces, layout, {
+    responsive: true,
+    displayModeBar: true
+  });
+}
+
+function downloadFilteredData(){
+  const rows = selectedRows();
+  if (rows.length === 0) return;
+
+  const headers = Object.keys(rows[0]);
+  const escapeCsv = value => {
+    if (value === null || value === undefined) return '';
+    const str = String(value);
+    if (/[",\n]/.test(str)) return '"' + str.replace(/"/g, '""') + '"';
+    return str;
+  };
+
+  const csv = [
+    headers.join(','),
+    ...rows.map(row => headers.map(h => escapeCsv(row[h])).join(','))
+  ].join('\n');
+
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'relationship_summary_filtered.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function refreshAll(){
+  updateControlVisibility();
+  updateCounts();
+  renderR2Plot();
+  renderSlopePlot();
+}
+
+function initControls(){
+  createMultiSelect(relationshipSelect, relationshipChoices, relationshipChoices, 'Select relationship(s)');
+  createMultiSelect(cropSelect, cropChoices, [], 'Select vegetation type(s)');
+  createMultiSelect(cropGroupSelect, cropGroupChoices, cropGroupChoices, 'Select vegetation group(s)');
+  createMultiSelect(climateSelect, climateChoices, [], 'Select climate(s)');
+  createMultiSelect(climateGroupSelect, climateGroupChoices, climateGroupChoices, 'Select climate group(s)');
+
+  relationshipSelect.addEventListener('change', refreshAll);
+  cropSelect.addEventListener('change', refreshAll);
+  cropGroupSelect.addEventListener('change', refreshAll);
+  climateSelect.addEventListener('change', refreshAll);
+  climateGroupSelect.addEventListener('change', refreshAll);
+  summaryTypeInputs.forEach(el => el.addEventListener('change', refreshAll));
+  downloadBtn.addEventListener('click', downloadFilteredData);
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  initControls();
+  refreshAll();
+});
+</script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  requestAnimationFrame(() => {
+    document.body.classList.add('page-loaded');
+  });
+
+  const internalLinks = document.querySelectorAll('a[href$=".html"]');
+  internalLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      const href = link.getAttribute('href');
+      if (!href) return;
+
+      e.preventDefault();
+      document.body.classList.remove('page-loaded');
+
+      setTimeout(() => {
+        window.location.href = href;
+      }, 220);
+    });
+  });
+});
+</script>
+  </body>
+</html>
+</html>
